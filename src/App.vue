@@ -1,31 +1,46 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+    <v-content>
+      <v-container fluid>
+        <v-form ref="form" @submit.prevent="onSubmit" v-model="valid">
+          <v-text-field
+            append-icon="search"
+            v-model="searchText"
+            :rules="searchTextRules"
+            :counter="30"
+            label="Введите текст..."
+            @click:append="onSubmit"
+            required
+          ></v-text-field>
+        </v-form>
+        <router-view :phrases="phrases"></router-view>
+      </v-container>
+    </v-content>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-}
+<script>
+import axios from "axios";
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+export default {
+  data() {
+    return {
+      phrases: [],
+      searchText: "",
+      searchTextRules: [
+        v => !!v || "Необходимо указать текст для поиска!",
+        v => v.length <= 30 || "Текст должен содежаь не более 30 знаков!"
+      ],
+      valid: false
+    };
+  },
+  methods: {
+    async onSubmit() {
+      if (this.$refs.form.validate()) {
+        const { data } = await axios.get(`/phrases?q=${this.searchText}`);
+        this.phrases = data;
+      }
+    }
+  }
+};
+</script>
