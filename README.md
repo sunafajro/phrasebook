@@ -1,5 +1,9 @@
 # cv-phrasebook
 
+## Requirements
+file server/credentials.js from google api
+https://developers.google.com/sheets/api/quickstart/nodejs
+
 ## Install packages
 ```
 npm install
