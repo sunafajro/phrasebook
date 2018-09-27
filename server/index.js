@@ -1,17 +1,19 @@
 const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const schedule = require("node-schedule");
 const listPhrases = require("./google-api");
 const Fuse = require("fuse.js");
+
 const app = express();
+app.use(express.static("public"));
 
 // server params
-const hostname = "127.0.0.1";
-const port = 8081;
+const PORT = process.env.PORT || 5000;
 
 // phrases data
 let data = [];
-const TMP_DB_PATH = "./server/db.json";
+const TMP_DB_PATH = `${path.resolve(process.cwd())}/db.json`;
 
 // search options
 const options = {
@@ -67,7 +69,9 @@ const j = schedule.scheduleJob("*/5 * * * *", async () => {
   }
 });
 
-app.get("/", (req, res) => res.send(data));
+app.get("/", (req, res) => {
+  res.sendFile(path.resolve(process.cwd(), "public/index.html"));
+});
 app.get("/phrases", (req, res) => {
   const { lang, q } = req.query;
   if (q) {
@@ -82,7 +86,7 @@ app.get("/phrases", (req, res) => {
   }
 });
 
-app.listen(port, hostname, () => {
+app.listen(PORT, () => {
   loadSavedData();
-  console.log(`Server running at http://${hostname}:${port}/`);
+  console.log(`Server running at ${PORT}`);
 });

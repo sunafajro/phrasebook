@@ -1,11 +1,12 @@
 const fs = require("fs");
+const path = require("path");
 const readline = require("readline");
 const { google } = require("googleapis");
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
-const CREDENTIALS_PATH = "./server/credentials.json";
-const TOKEN_PATH = "./server/token.json";
+const CREDENTIALS_PATH = `${path.resolve(process.cwd())}/credentials.json`;
+const TOKEN_PATH = `${path.resolve(process.cwd())}/token.json`;
 
 const createClient = async () => {
   try {
