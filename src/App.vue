@@ -22,7 +22,7 @@ import axios from "axios";
 export default {
   data() {
     return {
-      lang: 'cv',
+      lang: "cv",
       phrases: [],
       searchText: ""
     };
@@ -30,12 +30,14 @@ export default {
   methods: {
     async onSubmit() {
       if (this.searchText) {
-        const { data } = await axios.get(`/phrases?q=${this.searchText}&lang=${this.lang}`);
+        const { data } = await axios.get(
+          `/phrases?q=${this.searchText}&lang=${this.lang}`
+        );
         this.phrases = data;
       }
     },
     toggleLang() {
-      this.lang = this.lang === 'cv' ? 'ru' : 'cv';
+      this.lang = this.lang === "cv" ? "ru" : "cv";
     }
   }
 };
