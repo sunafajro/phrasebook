@@ -72,6 +72,7 @@ const j = schedule.scheduleJob("*/5 * * * *", async () => {
 app.get("/", (req, res) => {
   res.sendFile(path.resolve(process.cwd(), "public/index.html"));
 });
+
 app.get("/phrases", (req, res) => {
   const { lang, q } = req.query;
   if (q) {
@@ -82,8 +83,12 @@ app.get("/phrases", (req, res) => {
     const result = fuse.search(q);
     return res.send(result);
   } else {
-    return req.send("empty request");
+    return res.send(null);
   }
+});
+
+app.get("/phrases/count", (req, res) => {
+  return res.send({ count: Object.keys(data).length });
 });
 
 app.listen(PORT, () => {
