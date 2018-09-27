@@ -6,14 +6,14 @@ const listPhrases = require("./google-api");
 const Fuse = require("fuse.js");
 
 const app = express();
-app.use(express.static("public"));
+app.use(express.static(path.resolve(process.cwd(),'public')));
 
 // server params
 const PORT = process.env.PORT || 5000;
 
 // phrases data
 let data = [];
-const TMP_DB_PATH = `${path.resolve(process.cwd())}/db.json`;
+const TMP_DB_PATH = path.resolve(process.cwd(), 'server/db.json');
 
 // search options
 const options = {
