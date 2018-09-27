@@ -1,17 +1,21 @@
 <template>
-  <div>
-    <form @submit.prevent="onSubmit">
-      <button type="button" @click.prevent="toggleLang">{{ lang }}</button>
-      <input v-model="searchText" />
-      <button type="submit">искать</button>      
-    </form>
-    <div>
-      <div :key="item.id" v-for="item in phrases" v-if="phrases.length">
-        <p>
-          <b>{{ item.text.cv }}</b> - {{ item.text.ru }}
-        </p>
+  <div class="container-fluid">
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <button class="btn btn-info" type="button" @click="toggleLang">{{ lang }}</button>
       </div>
-      <div v-if="!phrases.length">Нет фраз или ошибка в запросе...</div>
+      <input class="form-control" type="text" v-model="searchText" @keyup.enter="submit" />
+      <div class="input-group-append">
+        <button class="btn btn-success" type="button" @click="submit">Go</button>
+      </div>      
+    </div>
+    <div>
+      <div :class="'alert alert-' + status.type" v-if="Object.keys(status).length">{{ status.text }}</div>
+      <div class="card" style="margin-bottom: 0.5rem" :key="item.id" v-for="item in phrases" v-if="phrases.length">
+        <div class="card-body">
+          <b>{{ item.text.cv }}</b> - {{ item.text.ru }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -24,16 +28,37 @@ export default {
     return {
       lang: "cv",
       phrases: [],
-      searchText: ""
+      searchText: "",
+      status: {
+        text: "Наберите произвольный текст для поиска.",
+        type: "info"
+      }
     };
   },
   methods: {
-    async onSubmit() {
+    async submit() {
       if (this.searchText) {
         const { data } = await axios.get(
           `/phrases?q=${this.searchText}&lang=${this.lang}`
         );
-        this.phrases = data;
+        
+        if (Array.isArray(data)) {
+          if (data.length) {
+            this.phrases = data;
+            this.status = {};
+          } else {
+            this.phrases = data;
+            this.status = {
+              text: "Совпадений не найдено.",
+              type: "warning"
+            }
+          }
+        } else {
+          this.status = {
+            text: "Произошла ошибка.",
+            type: "danger"
+          } 
+        }
       }
     },
     toggleLang() {
@@ -42,3 +67,9 @@ export default {
   }
 };
 </script>
+
+<style>
+  body {
+    padding-top: 30px;
+  }
+</style>
