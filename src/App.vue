@@ -38,26 +38,33 @@ export default {
   methods: {
     async submit() {
       if (this.searchText) {
-        const { data } = await axios.get(
-          `/phrases?q=${this.searchText}&lang=${this.lang}`
-        );
-        
-        if (Array.isArray(data)) {
-          if (data.length) {
-            this.phrases = data;
-            this.status = {};
-          } else {
-            this.phrases = data;
-            this.status = {
-              text: "Совпадений не найдено.",
-              type: "warning"
+        try {
+          const { data } = await axios.get(
+            `/phrases?q=${this.searchText}&lang=${this.lang}`
+          );
+
+          if (Array.isArray(data)) {
+            if (data.length) {
+              this.phrases = data;
+              this.status = {};
+            } else {
+              this.phrases = data;
+              this.status = {
+                text: "Совпадений не найдено.",
+                type: "warning"
+              };
             }
+          } else {
+            this.status = {
+              text: "Произошла ошибка.",
+              type: "danger"
+            };
           }
-        } else {
+        } catch (e) {
           this.status = {
             text: "Произошла ошибка.",
             type: "danger"
-          } 
+          };
         }
       }
     },
@@ -69,7 +76,7 @@ export default {
 </script>
 
 <style>
-  body {
-    padding-top: 30px;
-  }
+body {
+  padding-top: 30px;
+}
 </style>
