@@ -1,5 +1,6 @@
 <template>
   <div class="container-fluid">
+    <small>Количество фраз на сайте: <i>{{ phrasesCount }}</i></small>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
         <button class="btn btn-info" type="button" @click="toggleLang">{{ lang }}</button>
@@ -24,10 +25,22 @@
 import axios from "axios";
 
 export default {
+  async created() {
+    try {
+      const { data } = await this.getPhrasesCount();
+      this.phrasesCount = parseInt(data.count, 10);
+    } catch (e) {
+      this.status = {
+        text: "Произошла ошибка.",
+        type: "danger"
+      };
+    }
+  },
   data() {
     return {
       lang: "cv",
       phrases: [],
+      phrasesCount: 0,
       searchText: "",
       status: {
         text: "Наберите произвольный текст для поиска.",
@@ -36,19 +49,22 @@ export default {
     };
   },
   methods: {
+    getPhrasesCount() {
+      return axios.get("/phrases/count");
+    },
     async submit() {
       if (this.searchText) {
         try {
           const { data } = await axios.get(
             `/phrases?q=${this.searchText}&lang=${this.lang}`
           );
-
-          if (Array.isArray(data)) {
-            if (data.length) {
-              this.phrases = data;
+          this.phrasesCount = data.count;
+          if (Array.isArray(data.phrases)) {
+            if (data.phrases.length) {
+              this.phrases = data.phrases;
               this.status = {};
             } else {
-              this.phrases = data;
+              this.phrases = data.phrases;
               this.status = {
                 text: "Совпадений не найдено.",
                 type: "warning"

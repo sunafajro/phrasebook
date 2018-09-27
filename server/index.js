@@ -81,9 +81,9 @@ app.get("/phrases", (req, res) => {
     }
     const fuse = new Fuse(data, options);
     const result = fuse.search(q);
-    return res.send(result);
+    return res.send({ phrases: result, count: Object.keys(data).length });
   } else {
-    return res.send(null);
+    return res.send({ phrases: null, count: Object.keys(data).length });
   }
 });
 
