@@ -80,7 +80,7 @@ const listPhrases = async () => {
             // uuid of spreadsheet
             spreadsheetId: "1waaExBtxLaczDp4araeyvv8SZrtYhG_3iVV0nPSJzCc",
             // range
-            range: "Phrases!A2:C100",
+            range: "Phrases!A2:D100",
             majorDimension: "COLUMNS"
           },
           (err, res) => {

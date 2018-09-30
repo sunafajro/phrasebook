@@ -15,6 +15,7 @@
       <div class="card" style="margin-bottom: 0.5rem" :key="item.id" v-for="item in phrases" v-if="phrases.length">
         <div class="card-body">
           <b>{{ item.text.cv }}</b> - {{ item.text.ru }}
+          <button type="button" class="btn btn-info tag">{{ item.tags }}</button>
         </div>
       </div>
     </div>
