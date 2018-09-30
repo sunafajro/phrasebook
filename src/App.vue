@@ -15,7 +15,7 @@
       <div class="card" style="margin-bottom: 0.5rem" :key="item.id" v-for="item in phrases" v-if="phrases.length">
         <div class="card-body">
           <b>{{ item.text.cv }}</b> - {{ item.text.ru }}
-          <button type="button" class="btn btn-info tag">{{ item.tags }}</button>
+          <button type="button" class="btn btn-info tag" @click="searchTag(item.tags)">{{ item.tags }}</button>
         </div>
       </div>
     </div>
@@ -60,6 +60,40 @@ export default {
             `/phrases?q=${this.searchText}&lang=${this.lang}`
           );
           this.phrasesCount = data.count;
+          if (Array.isArray(data.phrases)) {
+            if (data.phrases.length) {
+              this.phrases = data.phrases;
+              this.status = {};
+            } else {
+              this.phrases = data.phrases;
+              this.status = {
+                text: "Совпадений не найдено.",
+                type: "warning"
+              };
+            }
+          } else {
+            this.status = {
+              text: "Произошла ошибка.",
+              type: "danger"
+            };
+          }
+        } catch (e) {
+          this.status = {
+            text: "Произошла ошибка.",
+            type: "danger"
+          };
+        }
+      }
+    },
+    async searchTag(tag) {
+      console.log("will search for tag", tag);
+      if (tag) {
+        try {
+          const { data } = await axios.get(
+            `/phrases?tag=${tag}`
+          );
+          this.phrasesCount = data.count;
+          //copy-pasted from submit, todo: refactor
           if (Array.isArray(data.phrases)) {
             if (data.phrases.length) {
               this.phrases = data.phrases;
