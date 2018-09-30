@@ -6,14 +6,14 @@ const listPhrases = require("./google-api");
 const Fuse = require("fuse.js");
 
 const app = express();
-app.use(express.static(path.resolve(process.cwd(),'public')));
+app.use(express.static(path.resolve(process.cwd(), "public")));
 
 // server params
 const PORT = process.env.PORT || 5000;
 
 // phrases data
 let data = [];
-const TMP_DB_PATH = path.resolve(process.cwd(), 'server/db.json');
+const TMP_DB_PATH = path.resolve(process.cwd(), "server/db.json");
 
 // search options
 const options = {
@@ -54,7 +54,7 @@ const j = schedule.scheduleJob("*/5 * * * *", async () => {
           cv: cv[index],
           ru: ru[index]
         },
-        tags: tags[index]
+        tags: tags[index] !== "-" ? tags[index].split(";") : []
       });
     });
     data = newData;
@@ -77,7 +77,6 @@ app.get("/", (req, res) => {
 
 app.get("/phrases", (req, res) => {
   const { lang, q, tag } = req.query;
-  console.log("tag", tag);
   if (q) {
     if (lang) {
       options.keys = [`text.${lang}`];
@@ -90,8 +89,7 @@ app.get("/phrases", (req, res) => {
     const fuse = new Fuse(data, options);
     const result = fuse.search(tag);
     return res.send({ phrases: result, count: Object.keys(data).length });
-  } 
-  else {
+  } else {
     return res.send({ phrases: null, count: Object.keys(data).length });
   }
 });
