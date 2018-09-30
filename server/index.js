@@ -45,6 +45,7 @@ const j = schedule.scheduleJob("*/5 * * * *", async () => {
     const id = result[0];
     const cv = result[1];
     const ru = result[2];
+    const tags = result[3];
     const newData = [];
     id.forEach((item, index) => {
       newData.push({
@@ -52,15 +53,16 @@ const j = schedule.scheduleJob("*/5 * * * *", async () => {
         text: {
           cv: cv[index],
           ru: ru[index]
-        }
+        },
+        tags: tags[index]
       });
     });
     data = newData;
     // save data to file
     await new Promise(resolve => {
       fs.writeFile(TMP_DB_PATH, JSON.stringify(newData), err => {
-        if (err) console.log("Error writing data to temporal db. ", err);
-        console.log("Temporal data stored to ", TMP_DB_PATH);
+        if (err) console.log("Error writing data to temporary db. ", err);
+        console.log("Temporary data stored to ", TMP_DB_PATH);
         return resolve();
       });
     });
