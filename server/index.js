@@ -76,7 +76,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/phrases", (req, res) => {
-  const { lang, q } = req.query;
+  const { lang, q, tag } = req.query;
+  console.log("tag", tag);
   if (q) {
     if (lang) {
       options.keys = [`text.${lang}`];
@@ -84,7 +85,13 @@ app.get("/phrases", (req, res) => {
     const fuse = new Fuse(data, options);
     const result = fuse.search(q);
     return res.send({ phrases: result, count: Object.keys(data).length });
-  } else {
+  } else if (tag) {
+    options.keys = [`tags`];
+    const fuse = new Fuse(data, options);
+    const result = fuse.search(tag);
+    return res.send({ phrases: result, count: Object.keys(data).length });
+  } 
+  else {
     return res.send({ phrases: null, count: Object.keys(data).length });
   }
 });
