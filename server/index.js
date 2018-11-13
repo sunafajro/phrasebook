@@ -8,6 +8,8 @@ const Fuse = require("fuse.js");
 const app = express();
 app.use(express.static(path.resolve(process.cwd(), "public")));
 
+const languages = ["cv", "ru"];
+
 // server params
 const PORT = process.env.PORT || 5000;
 
@@ -19,7 +21,24 @@ const TMP_DB_PATH = path.resolve(process.cwd(), "server/db.json");
 const options = {
   shouldSort: true,
   threshold: 0.3,
-  keys: ["text.cv"]
+  keys: ["term"]
+};
+
+const LABELS = {
+  errorOccurs: {
+    text: "Произошла ошибка",
+    type: "danger"
+  },
+  notFound: {
+    text: "Совпадений не найдено",
+    type: "warning"
+  },
+  pageTitle: "500 основных чувашских корней",
+  termsCount: "Количество фраз на сайте",
+  typeSearchText: {
+    text: "Наберите произвольный текст для поиска",
+    type: "info"
+  }
 };
 
 // read saved data on start
@@ -42,21 +61,30 @@ async function loadSavedData() {
 const j = schedule.scheduleJob("*/5 * * * *", async () => {
   try {
     const result = await listPhrases();
-    const id = result[0];
-    const cv = result[1];
-    const ru = result[2];
-    const tags = result[3];
-    const newData = [];
-    id.forEach((item, index) => {
-      newData.push({
-        id: item,
-        text: {
-          cv: cv[index],
-          ru: ru[index]
-        },
-        tags: tags[index] !== "-" ? tags[index].split(";") : []
+    const terms = result[0];
+    const transcriptions = result[1];
+    const translations = result[2];
+    const examples = result[3];
+    const newData = terms.reduce((a, v, i) => {
+      const e = examples[i].split(";");
+      a.push({
+        id: i + 1,
+        term: v,
+        transcription: transcriptions[i],
+        translation: translations[i],
+        examples: e.reduce((aa, vv) => {
+          vv = vv.trim();
+          const parts = vv.split(" — ");
+          if (parts.length === 1) console.log(`ROW ${i}. CHECK THIS: `, vv);
+          aa.push({
+            [languages[0]]: parts[0],
+            [languages[1]]: parts[1]
+          });
+          return aa;
+        }, [])
       });
-    });
+      return a;
+    }, []);
     data = newData;
     // save data to file
     await new Promise(resolve => {
@@ -78,8 +106,10 @@ app.get("/", (req, res) => {
 app.get("/phrases", (req, res) => {
   const { lang, q, tag } = req.query;
   if (q) {
-    if (lang) {
-      options.keys = [`text.${lang}`];
+    if (lang === languages[1]) {
+      options.keys = [`translation`];
+    } else {
+      options.keys = [`term`];
     }
     const fuse = new Fuse(data, options);
     const result = fuse.search(q);
@@ -94,8 +124,12 @@ app.get("/phrases", (req, res) => {
   }
 });
 
-app.get("/phrases/count", (req, res) => {
-  return res.send({ count: Object.keys(data).length });
+app.get("/state", (req, res) => {
+  return res.send({
+    count: Object.keys(data).length,
+    labels: LABELS,
+    languages
+  });
 });
 
 app.listen(PORT, () => {

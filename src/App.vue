@@ -27,7 +27,7 @@
               </div>
               <div style="style: font-size: 14px">
                 <span :key="'examples-' + item.id + '-' + i" v-for="(e, i) in item.examples">
-                  <span style="color:#920505">{{ e.cv }}</span> — <span style="color:#0a6482">{{ e.ru }}</span>{{ ". " }}
+                  <span style="color:#920505">{{ e[languages[0]] }}</span> — <span style="color:#0a6482">{{ e[languages[1]] }}</span>{{ ". " }}
                 </span>
               </div>
             </div>
@@ -46,6 +46,7 @@ export default {
     "count",
     "current",
     "labels",
+    "languages",
     "loading",
     "phrases",
     "search",
