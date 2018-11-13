@@ -3,7 +3,7 @@
     <div :class="'alert alert-' + status.type" v-if="!started">{{ status.text }}</div>
     <div v-if="started">
       <h2>{{ labels.pageTitle }}</h2>
-      <small>Количество фраз на сайте: <i>{{ count }}</i></small>
+      <small>{{ labels.termsCount }}: <i>{{ count }}</i></small>
       <div class="input-group mb-3">
         <div class="input-group-prepend">
           <button class="btn btn-info" type="button" @click="toggleLang">{{ current }}</button>
