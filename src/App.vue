@@ -2,20 +2,15 @@
   <div class="container-fluid">
     <div :class="'alert alert-' + status.type" v-if="!started">{{ status.text }}</div>
     <div v-if="started">
-      <h2>{{ labels.pageTitle }}</h2>
-      <small>{{ labels.termsCount }}: <i>{{ count }}</i></small>
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <button class="btn btn-info" type="button" @click="toggleLang">{{ current }}</button>
-        </div>
-        <input class="form-control" type="text" :value="search" @input="inputSearchText" @keyup.enter="getPhrases" />
-        <div class="input-group-append">
-          <button class="btn btn-success" type="button" @click="getPhrases"><i class="fas fa-search"></i></button>
-        </div>      
-      </div>
+      <header-component />
       <div>
+        <div class="row" style="margin-bottom: 0.5rem">
+          <div class="col-4 text-left"><button class="btn btn-sm" @click="prevPage" v-if="offset > 0">Назад</button></div>
+          <div class="col-4 text-center"> Показано {{ count === 0 ? 0 : offset + 1 }} - {{ (offset + limit) >= count ? count : offset + limit  }} из {{ count }}</div>
+          <div class="col-4 text-right"><button class="btn btn-sm" @click="nextPage" v-if="(phrases.length + offset) < count">Далее</button></div>
+        </div>
         <div :class="'alert alert-' + status.type" v-if="Object.keys(status).length">{{ status.text }}</div>
-        <div class="card" style="margin-bottom: 0.5rem" :key="item.id" v-for="item in phrases" v-if="phrases.length">
+        <div class="card" style="margin-bottom: 0.5rem" :key="item.id" v-for="item in phrases" v-if="!loading && phrases.length">
           <div class="card-body">
             <div class="text-block">
               <div style="font-size: 18px">
@@ -40,14 +35,20 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
+import Header from "./Header.vue";
 
 export default {
+  components: {
+    "header-component": Header
+  },
   computed: mapState([
     "count",
     "current",
     "labels",
     "languages",
+    "limit",
     "loading",
+    "offset",
     "phrases",
     "search",
     "started",
@@ -55,12 +56,10 @@ export default {
   ]),
   async created() {
     await this.getAppState();
+    await this.getPhrases();
   },
   methods: {
-    ...mapActions(["getAppState", "getPhrases", "setSearchText", "toggleLang"]),
-    inputSearchText(e) {
-      this.setSearchText(e.target.value);
-    }
+    ...mapActions(["getAppState", "getPhrases", "nextPage", "prevPage"])
   }
 };
 </script>
