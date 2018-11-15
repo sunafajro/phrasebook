@@ -29,12 +29,26 @@ const LABELS = {
     text: "Произошла ошибка",
     type: "danger"
   },
+  loadingData: {
+    text: "Идет загрузка...",
+    type: "info" 
+  },
+  nextPage: {
+    text: "Вперед"
+  },
   notFound: {
     text: "Совпадений не найдено",
     type: "warning"
   },
-  pageTitle: "500 основных чувашских корней",
-  termsCount: "Количество фраз на сайте",
+  pageTitle: {
+    text: "500 основных чувашских корней"
+  },
+  previousPage: {
+    text: "Назад"
+  },
+  termsCount: {
+    text: "Количество фраз на сайте"
+  },
   typeSearchText: {
     text: "Наберите произвольный текст для поиска",
     type: "info"
@@ -69,16 +83,16 @@ const j = schedule.scheduleJob("*/5 * * * *", async () => {
       const e = examples[i].split(";");
       a.push({
         id: i + 1,
-        term: v,
-        transcription: transcriptions[i],
-        translation: translations[i],
+        term: v ? v.trim() : "",
+        transcription: transcriptions[i] ? transcriptions[i].trim() : "",
+        translation: translations[i] ? translations[i].trim() : "",
         examples: e.reduce((aa, vv) => {
           vv = vv.trim();
           const parts = vv.split(" — ");
           if (parts.length === 1) console.log(`ROW ${i}. CHECK THIS: `, vv);
           aa.push({
-            [languages[0]]: parts[0],
-            [languages[1]]: parts[1]
+            [languages[0]]: parts[0] ? parts[0].trim() : "",
+            [languages[1]]: parts[1] ? parts[1].trim() : ""
           });
           return aa;
         }, [])
@@ -104,29 +118,33 @@ app.get("/", (req, res) => {
 });
 
 app.get("/phrases", (req, res) => {
-  const { lang, q, tag } = req.query;
-  if (q) {
-    if (lang === languages[1]) {
+  const language = req.query.language ? req.query.language : languages[0];
+  const limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
+  const offset = req.query.offset ? parseInt(req.query.offset, 10) : 0;
+  const search = req.query.search ? req.query.search : null;
+  if (search) {
+    if (language === languages[1]) {
       options.keys = [`translation`];
     } else {
       options.keys = [`term`];
     }
     const fuse = new Fuse(data, options);
-    const result = fuse.search(q);
-    return res.send({ phrases: result, count: Object.keys(data).length });
-  } else if (tag) {
-    options.keys = [`tags`];
-    const fuse = new Fuse(data, options);
-    const result = fuse.search(tag);
-    return res.send({ phrases: result, count: Object.keys(data).length });
+    const result = fuse.search(search);
+    return res.send({
+      count: result.length,
+      phrases: result.slice(offset, offset + limit)
+    });
   } else {
-    return res.send({ phrases: null, count: Object.keys(data).length });
+    return res.send({
+      count: data.length,
+      phrases: data.slice(offset, offset + limit)
+    });
   }
 });
 
 app.get("/state", (req, res) => {
   return res.send({
-    count: Object.keys(data).length,
+    totalCount: data.length,
     labels: LABELS,
     languages
   });

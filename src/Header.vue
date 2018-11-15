@@ -1,8 +1,8 @@
 
 <template>
   <div>
-    <h2>{{ labels.pageTitle }}</h2>
-    <small>{{ labels.termsCount }}: <i>{{ totalCount }}</i></small>
+    <h2>{{ labels.pageTitle.text }}</h2>
+    <small>{{ labels.termsCount.text }}: <i>{{ totalCount }}</i></small>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
         <button class="btn btn-info" type="button" @click="toggleLang">{{ current }}</button>

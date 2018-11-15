@@ -5,9 +5,9 @@
       <header-component />
       <div>
         <div class="row" style="margin-bottom: 0.5rem">
-          <div class="col-4 text-left"><button class="btn btn-sm" @click="prevPage" v-if="offset > 0">Назад</button></div>
+          <div class="col-4 text-left"><button class="btn btn-sm" @click="prevPage" v-if="offset > 0">{{ labels.previousPage.text }}</button></div>
           <div class="col-4 text-center"> Показано {{ count === 0 ? 0 : offset + 1 }} - {{ (offset + limit) >= count ? count : offset + limit  }} из {{ count }}</div>
-          <div class="col-4 text-right"><button class="btn btn-sm" @click="nextPage" v-if="(phrases.length + offset) < count">Далее</button></div>
+          <div class="col-4 text-right"><button class="btn btn-sm" @click="nextPage" v-if="(phrases.length + offset) < count">{{ labels.nextPage.text }}</button></div>
         </div>
         <div :class="'alert alert-' + status.type" v-if="Object.keys(status).length">{{ status.text }}</div>
         <div class="card" style="margin-bottom: 0.5rem" :key="item.id" v-for="item in phrases" v-if="!loading && phrases.length">

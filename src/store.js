@@ -17,12 +17,22 @@ export default new Vuex.Store({
         text: "Идет загрузка...",
         type: "info"
       },
+      nextPage: {
+        text: "Вперед"
+      },
       notFound: {
         text: "Совпадений не найдено",
         type: "warning"
       },
-      pageTitle: "500 основных чувашских корней",
-      termsCount: "Количество фраз на сайте",
+      pageTitle: {
+        text: "500 основных чувашских корней"
+      },
+      previousPage: {
+        text: "Назад"
+      },
+      termsCount: {
+        text: "Количество фраз на сайте"
+      },
       typeSearchText: {
         text: "Наберите произвольный текст для поиска",
         type: "info"
