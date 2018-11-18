@@ -9,7 +9,7 @@
           <router-link class="nav-link" to="/">Главная</router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/training">Тренировка</router-link>
+          <router-link class="nav-link" to="/random">Случайная фраза</router-link>
         </li>
         <li class="nav-item">
           <router-link class="nav-link" to="/about">О проекте</router-link>
@@ -20,7 +20,4 @@
 </template>
 
 <script>
-export default {
-    
-}
 </script>
