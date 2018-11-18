@@ -15,6 +15,7 @@ const PORT = process.env.PORT || 5000;
 
 // phrases data
 let data = [];
+let cards = [];
 const TMP_DB_PATH = path.resolve(process.cwd(), "server/db.json");
 
 // search options
@@ -79,6 +80,7 @@ const j = schedule.scheduleJob("*/5 * * * *", async () => {
     const transcriptions = result[1];
     const translations = result[2];
     const examples = result[3];
+    const newCards = [];
     const newData = terms.reduce((a, v, i) => {
       const e = examples[i].split(";");
       a.push({
@@ -89,17 +91,20 @@ const j = schedule.scheduleJob("*/5 * * * *", async () => {
         examples: e.reduce((aa, vv) => {
           vv = vv.trim();
           const parts = vv.split(" — ");
-          if (parts.length === 1) console.log(`ROW ${i}. CHECK THIS: `, vv);
-          aa.push({
+          const card = {
             [languages[0]]: parts[0] ? parts[0].trim() : "",
             [languages[1]]: parts[1] ? parts[1].trim() : ""
-          });
+          };
+          if (parts.length === 1) console.log(`ROW ${i}. CHECK THIS: `, vv);
+          aa.push(card);
+          newCards.push(card);
           return aa;
         }, [])
       });
       return a;
     }, []);
     data = newData;
+    cards = newCards;
     // save data to file
     await new Promise(resolve => {
       fs.writeFile(TMP_DB_PATH, JSON.stringify(newData), err => {
@@ -140,6 +145,15 @@ app.get("/phrases", (req, res) => {
       phrases: data.slice(offset, offset + limit)
     });
   }
+});
+
+app.get("/random", (req, res) => {
+  const min = 0;
+  const max = cards.length + 1;
+  const num = Math.floor(Math.random() * (max - min)) + min;
+  return res.send({
+    card: cards[num],
+  });
 });
 
 app.get("/state", (req, res) => {
