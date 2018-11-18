@@ -43,6 +43,7 @@ export default new Vuex.Store({
     loading: false,
     offset: 0,
     phrases: [],
+    randomPhrase: {},
     search: "",
     started: false,
     status: {
@@ -52,6 +53,13 @@ export default new Vuex.Store({
     totalCount: 0
   },
   mutations: {
+    updateAppState(state, data) {
+      state.totalCount = data.totalCount;
+      state.labels = data.labels;
+      state.languages = data.languages;
+      state.started = true;
+      state.status = data.labels.typeSearchText;
+    },
     updateCount(state, data) {
       state.count = data;
     },
@@ -69,15 +77,11 @@ export default new Vuex.Store({
     updatePhrases(state, data) {
       state.phrases = data;
     },
+    updateRandomPhrase(state, data) {
+      state.randomPhrase = data;
+    },
     updateSearch(state, data) {
       state.search = data;
-    },
-    updateAppState(state, data) {
-      state.totalCount = data.totalCount;
-      state.labels = data.labels;
-      state.languages = data.languages;
-      state.started = true;
-      state.status = data.labels.typeSearchText;
     },
     updateStatus(state, { text, type }) {
       state.status = { text, type };
@@ -133,6 +137,25 @@ export default new Vuex.Store({
         }
       } catch (e) {
         commit("updatePhrases", []);
+        commit("updateStatus", state.labels.errorOccurs);
+        commit("updateLoading", false);
+      }
+    },
+    async getRandomPhrase({ commit, state }) {
+      commit("updateLoading", true);
+      try {
+        const { data } = await axios.get("/random");
+        if (data.hasOwnProperty("card")) {
+          commit("updateRandomPhrase", data.card);
+          commit("updateStatus", {});
+          commit("updateLoading", false);
+        } else {
+          commit("updateRandomPhrase", {});
+          commit("updateStatus", state.labels.errorOccurs);
+          commit("updateLoading", false);
+        }
+      } catch (e) {
+        commit("updateRandomPhrase", {});
         commit("updateStatus", state.labels.errorOccurs);
         commit("updateLoading", false);
       }
