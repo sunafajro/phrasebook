@@ -75,10 +75,14 @@ export default new Vuex.Store({
       state.offset = data.offset;
     },
     updatePhrases(state, data) {
-      state.phrases = data;
+      state.loading = data.loading;
+      state.phrases = data.phrases;
+      state.status = data.status;
     },
     updateRandomPhrase(state, data) {
-      state.randomPhrase = data;
+      state.loading = data.loading;
+      state.randomPhrase = data.phrase;
+      state.status = data.status;
     },
     updateSearch(state, data) {
       state.search = data;
@@ -122,23 +126,31 @@ export default new Vuex.Store({
         }
         if (Array.isArray(data.phrases)) {
           if (data.phrases.length) {
-            commit("updatePhrases", data.phrases);
-            commit("updateStatus", {});
-            commit("updateLoading", false);
+            commit("updatePhrases", {
+              loading: false,
+              phrases: data.phrases,
+              status: {}
+            });
           } else {
-            commit("updatePhrases", []);
-            commit("updateStatus", state.labels.notFound);
-            commit("updateLoading", false);
+            commit("updatePhrases", {
+              loading: false,
+              phrases: [],
+              status: state.labels.notFound
+            });
           }
         } else {
-          commit("updatePhrases", []);
-          commit("updateStatus", state.labels.typeSearchText);
-          commit("updateLoading", false);
+          commit("updatePhrases", {
+            loading: false,
+            phrases: [],
+            status: state.labels.typeSearchText
+          });
         }
       } catch (e) {
-        commit("updatePhrases", []);
-        commit("updateStatus", state.labels.errorOccurs);
-        commit("updateLoading", false);
+        commit("updatePhrases", {
+          loading: false,
+          phrases: [],
+          status: state.labels.errorOccurs
+        });
       }
     },
     async getRandomPhrase({ commit, state }) {
@@ -146,18 +158,24 @@ export default new Vuex.Store({
       try {
         const { data } = await axios.get("/random");
         if (data.hasOwnProperty("card")) {
-          commit("updateRandomPhrase", data.card);
-          commit("updateStatus", {});
-          commit("updateLoading", false);
+          commit("updateRandomPhrase", {
+            loading: false,
+            phrase: data.card,
+            status: {}
+          });
         } else {
-          commit("updateRandomPhrase", {});
-          commit("updateStatus", state.labels.errorOccurs);
-          commit("updateLoading", false);
+          commit("updateRandomPhrase", {
+            loading: false,
+            phrase: {},
+            status: state.labels.notFound
+          });
         }
       } catch (e) {
-        commit("updateRandomPhrase", {});
-        commit("updateStatus", state.labels.errorOccurs);
-        commit("updateLoading", false);
+        commit("updateRandomPhrase", {
+          loading: false,
+          phrase: {},
+          status: state.labels.errorOccurs
+        });
       }
     },
     async nextPage({ commit, dispatch, state }) {
