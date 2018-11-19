@@ -4,10 +4,12 @@ const express = require("express");
 const schedule = require("node-schedule");
 const listPhrases = require("./google-api");
 const Fuse = require("fuse.js");
+const aboutSite = require("./about");
 
 const app = express();
 app.use(express.static(path.resolve(process.cwd(), "public")));
 
+// app languages
 const languages = ["cv", "ru"];
 
 // server params
@@ -16,6 +18,7 @@ const PORT = process.env.PORT || 5000;
 // phrases data
 let data = [];
 let cards = [];
+
 const TMP_DB_PATH = path.resolve(process.cwd(), "server/db.json");
 
 // search options
@@ -32,7 +35,7 @@ const LABELS = {
   },
   loadingData: {
     text: "Идет загрузка...",
-    type: "info" 
+    type: "info"
   },
   nextPage: {
     text: "Вперед"
@@ -57,7 +60,7 @@ const LABELS = {
 };
 
 // read saved data on start
-async function loadSavedData() {
+const loadSavedData = async () => {
   const newData = await new Promise(resolve => {
     fs.readFile(TMP_DB_PATH, (err, content) => {
       if (err) console.log("Error loading saved data from file. ", err);
@@ -70,7 +73,7 @@ async function loadSavedData() {
   } else {
     console.log("No data in the file.");
   }
-}
+};
 
 // check google spreadsheet every 5 minutes
 const j = schedule.scheduleJob("*/5 * * * *", async () => {
@@ -152,15 +155,16 @@ app.get("/random", (req, res) => {
   const max = cards.length + 1;
   const num = Math.floor(Math.random() * (max - min)) + min;
   return res.send({
-    card: cards[num],
+    card: cards[num]
   });
 });
 
 app.get("/state", (req, res) => {
   return res.send({
-    totalCount: data.length,
+    about: aboutSite,
     labels: LABELS,
-    languages
+    languages,
+    totalCount: data.length
   });
 });
 
