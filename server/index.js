@@ -75,6 +75,19 @@ const loadSavedData = async () => {
   }
 };
 
+const replaceToCyrillic = str => {
+  return str
+    .toString()
+    .replace(/ă/g, "ӑ")
+    .replace(/Ă/g, "Ӑ")
+    .replace(/ĕ/g, "ӗ")
+    .replace(/Ĕ/g, "Ӗ")
+    .replace(/ç/g, "ҫ")
+    .replace(/Ç/g, "Ҫ")
+    .replace(/ÿ/g, "ӳ")
+    .replace(/Ÿ/g, "Ӳ");
+};
+
 // check google spreadsheet every 5 minutes
 const j = schedule.scheduleJob("*/5 * * * *", async () => {
   try {
@@ -88,14 +101,14 @@ const j = schedule.scheduleJob("*/5 * * * *", async () => {
       const e = examples[i].split(";");
       a.push({
         id: i + 1,
-        term: v ? v.trim() : "",
+        term: v ? replaceToCyrillic(v.trim()) : "",
         transcription: transcriptions[i] ? transcriptions[i].trim() : "",
         translation: translations[i] ? translations[i].trim() : "",
         examples: e.reduce((aa, vv) => {
           vv = vv.trim();
           const parts = vv.split(" — ");
           const card = {
-            [languages[0]]: parts[0] ? parts[0].trim() : "",
+            [languages[0]]: parts[0] ? replaceToCyrillic(parts[0].trim()) : "",
             [languages[1]]: parts[1] ? parts[1].trim() : ""
           };
           if (parts.length === 1) console.log(`ROW ${i}. CHECK THIS: `, vv);
