@@ -6,6 +6,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    about: {},
     count: 0,
     current: "cv",
     labels: {
@@ -54,11 +55,12 @@ export default new Vuex.Store({
   },
   mutations: {
     updateAppState(state, data) {
-      state.totalCount = data.totalCount;
+      state.about = data.about;
       state.labels = data.labels;
       state.languages = data.languages;
       state.started = true;
       state.status = data.labels.typeSearchText;
+      state.totalCount = data.totalCount;
     },
     updateCount(state, data) {
       state.count = data;
