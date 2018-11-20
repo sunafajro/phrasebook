@@ -9,6 +9,9 @@ export default new Vuex.Store({
     about: {},
     count: 0,
     current: "cv",
+    emailText: "",
+    fromEmail: "",
+    fromName: "",
     labels: {
       errorOccurs: {
         text: "Произошла ошибка",
@@ -46,6 +49,7 @@ export default new Vuex.Store({
     phrases: [],
     randomPhrase: {},
     search: "",
+    showContactForm: null,
     started: false,
     status: {
       text: "Загрузка приложения",
@@ -62,11 +66,30 @@ export default new Vuex.Store({
       state.status = data.labels.typeSearchText;
       state.totalCount = data.totalCount;
     },
+    updateContactForm(state, data) {
+      if (data.hasOwnProperty("emailText")) {
+        state.emailText = data.emailText;
+      }
+      if (data.hasOwnProperty("fromEmail")) {
+        state.fromEmail = data.fromEmail;
+      }
+      if (data.hasOwnProperty("fromName")) {
+        state.fromName = data.fromName;
+      }
+      if (data.hasOwnProperty("show")) {
+        state.showContactForm =
+          data.show !== state.showContactForm ? data.show : null;
+        state.fromEmail = "";
+        state.fromName = "";
+        state.emailText = "";
+      }
+    },
     updateCount(state, data) {
       state.count = data;
     },
-    updateLanguage(state, data) {
-      state.current = data;
+    updateLanguage(state) {
+      const i = state.languages.indexOf(state.current);
+      state.current = i === 0 ? state.languages[1] : state.languages[0];
     },
     updateLoading(state, data) {
       state.loading = data;
@@ -200,16 +223,6 @@ export default new Vuex.Store({
         offset: 0
       });
       await dispatch("getPhrases");
-    },
-    setSearchText({ commit }, payload) {
-      commit("updateSearch", payload);
-    },
-    toggleLang({ commit, state }) {
-      const i = state.languages.indexOf(state.current);
-      commit(
-        "updateLanguage",
-        i === 0 ? state.languages[1] : state.languages[0]
-      );
     }
   }
 });
