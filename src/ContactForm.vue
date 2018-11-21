@@ -1,26 +1,34 @@
 <template>
   <div class="card-body">
-    <b>Ваше имя:</b>
-    <input class="form-control form-control-sm" v-model="fromName" />
-    <b>Э-почта или телефон:</b>
-    <input class="form-control form-control-sm" v-model="fromEmail" />
-    <b>Текст:</b>
-    <textarea class="form-control form-control-sm" rows="6" v-model="emailText"></textarea>
-    <div class="text-right" style="margin-top: 0.5rem">
-      <vue-recaptcha sitekey="6LesQHwUAAAAAPQ9vmkR5zWSYS_cjvto0u7YZrK5">
-        <button class="btn btn-info" :disabled="!fromName || !fromEmail || !emailText" @click="sendEmail">Отправить</button>
+    <form @submit.prevent="onSubmit">
+      <b>Ваше имя:</b>
+      <input class="form-control form-control-sm" v-model="fromName" />
+      <b>Э-почта или телефон:</b>
+      <input class="form-control form-control-sm" v-model="fromEmail" />
+      <b>Текст:</b>
+      <textarea class="form-control form-control-sm" rows="6" v-model="emailText"></textarea>
+      <div class="text-right" style="margin-top: 0.5rem">
+      <vue-recaptcha
+        ref="invisibleRecaptcha"
+        @verify="onVerify"
+        @expired="onExpired"
+        size="invisible"
+        :sitekey="sitekey">
       </vue-recaptcha>
-    </div>
+      <button class="btn btn-info" :disabled="!fromName || !fromEmail || !emailText" type="submit">Отправить</button>
+      </div>
+    </form>
   </div>
 </template>
 
 <script>
 import VueRecaptcha from "vue-recaptcha";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   components: { VueRecaptcha },
   computed: {
+    ...mapState(["sitekey"]),
     fromEmail: {
       get() {
         return this.$store.state.fromEmail;
@@ -61,6 +69,18 @@ export default {
         fromName: null,
         show: null
       });
+    },
+    onExpired() {
+      // eslint-disable-next-line
+      console.log("Expired");
+    },
+    onSubmit() {
+      this.$refs.invisibleRecaptcha.execute();
+    },
+    onVerify(response) {
+      // eslint-disable-next-line
+      console.log("Verify: " + response);
+      this.sendEmail();
     }
   }
 };

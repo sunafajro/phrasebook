@@ -51,6 +51,7 @@ export default new Vuex.Store({
     randomPhrase: {},
     search: "",
     showContactForm: null,
+    sitekey: "6LesQHwUAAAAAPQ9vmkR5zWSYS_cjvto0u7YZrK5",
     started: false,
     status: {
       text: "Загрузка приложения",
