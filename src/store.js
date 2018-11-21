@@ -14,6 +14,9 @@ export default new Vuex.Store({
     fromEmail: "",
     fromName: "",
     labels: {
+      footerLabel: {
+        text: "© Чувашская общественная организация «Хавал» 2018."
+      },
       errorOccurs: {
         text: "Произошла ошибка",
         type: "danger"
