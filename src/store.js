@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
+import Noty from "noty";
 
 Vue.use(Vuex);
 
@@ -216,6 +217,14 @@ export default new Vuex.Store({
         offset: state.offset - state.limit
       });
       await dispatch("getPhrases");
+    },
+    showNotification(context, payload) {
+      new Noty({
+        theme: "bootstrap-v4",
+        text: payload.message,
+        timeout: 2000,
+        type: payload.type
+      }).show();
     },
     async startSearch({ commit, dispatch, state }) {
       commit("updatePaging", {
