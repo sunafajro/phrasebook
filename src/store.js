@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import Noty from "noty";
+import { getCSRF } from "./utils";
 
 Vue.use(Vuex);
 
@@ -221,6 +222,29 @@ export default new Vuex.Store({
         offset: state.offset - state.limit
       });
       await dispatch("getPhrases");
+    },
+    async sendingEmail({ commit, state }) {
+      const { data: token } = await getCSRF();
+      const { data } = await axios.post(
+        "/send-email",
+        {
+          fromEmail: state.fromEmail,
+          fromName: state.fromName,
+          emailText: state.emailText
+        },
+        {
+          credentials: "same-origin",
+          headers: {
+            "CSRF-Token": token._csrf
+          }
+        }
+      );
+      commit("updateContactForm", {
+        emailText: null,
+        fromEmail: null,
+        fromName: null,
+        show: null
+      });
     },
     showNotification(context, payload) {
       new Noty({
