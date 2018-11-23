@@ -55,19 +55,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["showNotification"]),
-    sendEmail() {
-      // eslint-disable-next-line
-      console.log("sended!");
+    ...mapActions(["sendingEmail", "showNotification"]),
+    async sendEmail() {
+      this.sendingEmail();
       this.showNotification({
         message: "Ваш запрос успешно отправлен!",
         type: "success"
-      });
-      this.$store.commit("updateContactForm", {
-        emailText: null,
-        fromEmail: null,
-        fromName: null,
-        show: null
       });
     },
     onExpired() {
