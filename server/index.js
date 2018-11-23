@@ -1,12 +1,18 @@
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
+const cookieParser = require("cookie-parser");
+const csrf = require("csurf");
+const bodyParser = require("body-parser");
 const schedule = require("node-schedule");
 const listPhrases = require("./google-api");
 const Fuse = require("fuse.js");
 const aboutSite = require("./about");
 
+const csrfProtection = csrf({ cookie: true });
 const app = express();
+app.use(cookieParser());
+app.use(bodyParser.json());
 app.use(express.static(path.resolve(process.cwd(), "public")));
 
 // app languages
@@ -29,6 +35,9 @@ const options = {
 };
 
 const LABELS = {
+  footerLabel: {
+    text: "© Чувашская общественная организация «Хавал» 2018."
+  },
   errorOccurs: {
     text: "Произошла ошибка",
     type: "danger"
@@ -138,6 +147,10 @@ app.get("/", (req, res) => {
   res.sendFile(path.resolve(process.cwd(), "public/index.html"));
 });
 
+app.get("/csrf", csrfProtection, (req, res) => {
+  res.send({ _csrf: req.csrfToken() });
+});
+
 app.get("/phrases", (req, res) => {
   const language = req.query.language ? req.query.language : languages[0];
   const limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
@@ -170,6 +183,10 @@ app.get("/random", (req, res) => {
   return res.send({
     card: cards[num]
   });
+});
+
+app.post("/send-email", csrfProtection, (req, res) => {
+  res.send("data is being processed");
 });
 
 app.get("/state", (req, res) => {
