@@ -22,59 +22,50 @@
 </template>
 
 <script>
-import VueRecaptcha from "vue-recaptcha";
-import { mapActions, mapState } from "vuex";
+import VueRecaptcha from 'vue-recaptcha';
+import { mapActions, mapState } from 'vuex';
 
 export default {
   components: { VueRecaptcha },
   computed: {
-    ...mapState(["sitekey"]),
+    ...mapState(['sitekey']),
     fromEmail: {
       get() {
         return this.$store.state.fromEmail;
       },
       set(value) {
-        this.$store.commit("updateContactForm", { fromEmail: value });
-      }
+        this.$store.commit('updateContactForm', { fromEmail: value });
+      },
     },
     fromName: {
       get() {
         return this.$store.state.fromName;
       },
       set(value) {
-        this.$store.commit("updateContactForm", { fromName: value });
-      }
+        this.$store.commit('updateContactForm', { fromName: value });
+      },
     },
     emailText: {
       get() {
         return this.$store.state.emailText;
       },
       set(value) {
-        this.$store.commit("updateContactForm", { emailText: value });
-      }
-    }
+        this.$store.commit('updateContactForm', { emailText: value });
+      },
+    },
   },
   methods: {
-    ...mapActions(["sendingEmail", "showNotification"]),
-    async sendEmail() {
-      this.sendingEmail();
-      this.showNotification({
-        message: "Ваш запрос успешно отправлен!",
-        type: "success"
-      });
-    },
+    ...mapActions(['sendingEmail', 'showNotification']),
     onExpired() {
-      // eslint-disable-next-line
-      console.log("Expired");
+      this.$refs.invisibleRecaptcha.reset();
     },
     onSubmit() {
       this.$refs.invisibleRecaptcha.execute();
     },
-    onVerify(response) {
-      // eslint-disable-next-line
-      console.log("Verify: " + response);
-      this.sendEmail();
-    }
-  }
+    onVerify() {
+      this.$refs.invisibleRecaptcha.reset();
+      this.sendingEmail();
+    },
+  },
 };
 </script>
