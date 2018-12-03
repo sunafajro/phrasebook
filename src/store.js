@@ -9,6 +9,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     about: {},
+    appLanguage: '',
     count: 0,
     current: 'cv',
     emailText: '',
@@ -55,7 +56,7 @@ export default new Vuex.Store({
         type: 'info',
       },
     },
-    languages: ['cv', 'ru'],
+    languages: ['cv', 'ru', 'sv', 'eo'],
     limit: 10,
     loading: false,
     offset: 0,
@@ -72,6 +73,9 @@ export default new Vuex.Store({
     totalCount: 0,
   },
   mutations: {
+    updateAppLanguage(state, language) {
+      state.appLanguage = language;
+    },
     updateAppState(state, data) {
       state.about = data.about;
       state.labels = data.labels;
