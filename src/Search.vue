@@ -14,23 +14,23 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
   computed: {
-    ...mapState(["current", "labels", "totalCount"]),
+    ...mapState(['current', 'labels', 'totalCount']),
     search: {
       get() {
         return this.$store.state.search;
       },
       set(value) {
-        this.$store.commit("updateSearch", value);
-      }
-    }
+        this.$store.commit('updateSearch', value);
+      },
+    },
   },
   methods: {
-    ...mapActions(["getPhrases", "startSearch", "toggleLang"]),
-    ...mapMutations(["updateLanguage"])
-  }
+    ...mapActions(['startSearch']),
+    ...mapMutations(['updateLanguage']),
+  },
 };
 </script>

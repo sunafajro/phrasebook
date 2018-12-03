@@ -29,18 +29,18 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import ContactForm from "./ContactForm.vue";
+import { mapState } from 'vuex';
+import ContactForm from './ContactForm.vue';
 
 export default {
-  computed: mapState(["about", "languages", "showContactForm"]),
+  computed: mapState(['about', 'languages', 'showContactForm']),
   components: {
-    "form-component": ContactForm
+    'form-component': ContactForm,
   },
   methods: {
     showForm(key) {
-      this.$store.commit("updateContactForm", { show: key });
-    }
-  }
+      this.$store.commit('updateContactForm', { show: key });
+    },
+  },
 };
 </script>
