@@ -1,21 +1,25 @@
 <template>
   <div class="card-body">
     <form @submit.prevent="onSubmit">
-      <b>Ваше имя:</b>
-      <input class="form-control form-control-sm" v-model="fromName" />
-      <b>Э-почта или телефон:</b>
-      <input class="form-control form-control-sm" v-model="fromEmail" />
-      <b>Текст:</b>
+      <b>{{ localizedMessage('yourName') }}:</b>
+      <input class="form-control form-control-sm" v-model="fromName">
+      <b>{{ localizedMessage('emailOrPhone') }}:</b>
+      <input class="form-control form-control-sm" v-model="fromEmail">
+      <b>{{ localizedMessage('letterText') }}:</b>
       <textarea class="form-control form-control-sm" rows="6" v-model="emailText"></textarea>
       <div class="text-right" style="margin-top: 0.5rem">
-      <vue-recaptcha
-        ref="invisibleRecaptcha"
-        @verify="onVerify"
-        @expired="onExpired"
-        size="invisible"
-        :sitekey="sitekey">
-      </vue-recaptcha>
-      <button class="btn btn-info" :disabled="!fromName || !fromEmail || !emailText" type="submit">Отправить</button>
+        <vue-recaptcha
+          ref="invisibleRecaptcha"
+          @verify="onVerify"
+          @expired="onExpired"
+          size="invisible"
+          :sitekey="sitekey"
+        ></vue-recaptcha>
+        <button
+          class="btn btn-info"
+          :disabled="!fromName || !fromEmail || !emailText"
+          type="submit"
+        >{{ localizedMessage('sendEmail') }}</button>
       </div>
     </form>
   </div>
@@ -23,12 +27,13 @@
 
 <script>
 import VueRecaptcha from 'vue-recaptcha';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
   components: { VueRecaptcha },
   computed: {
     ...mapState(['sitekey']),
+    ...mapGetters(['localizedMessage']),
     fromEmail: {
       get() {
         return this.$store.state.fromEmail;

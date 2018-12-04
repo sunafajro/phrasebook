@@ -1,16 +1,16 @@
 <template>
   <footer class="footer">
     <div class="container">
-      <span class="text-muted">{{ labels.footerLabel.text }}</span>
+      <span class="text-muted">{{ localizedMessage('footerLabel') }}</span>
     </div>
   </footer>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters } from 'vuex';
 export default {
   computed: {
-    ...mapState(["labels"])
-  }
+    ...mapGetters(['localizedMessage']),
+  },
 };
 </script>

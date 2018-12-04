@@ -3,60 +3,31 @@ import Vuex from 'vuex';
 import axios from 'axios';
 import Noty from 'noty';
 import { getCSRF } from './utils';
+import defaultLabels from './defaultLabels';
 
 Vue.use(Vuex);
+const storage = window.localStorage;
 
 export default new Vuex.Store({
   state: {
     about: {},
     appLanguage: '',
     count: 0,
-    current: 'cv',
+    current: '',
     emailText: '',
     fromEmail: '',
     fromName: '',
     labels: {
-      footerLabel: {
-        text: '© Чувашская общественная организация «Хавал» 2018.',
-      },
-      emailSendedError: {
-        text: 'Ошибка при отправке письма!',
-        type: 'danger',
-      },
-      emailSendedSuccess: {
-        text: 'Ваше письмо успешно отправлено!',
-        type: 'success',
-      },
       errorOccurs: {
-        text: 'Произошла ошибка',
+        text: { ...defaultLabels.errorOccurs },
         type: 'danger',
       },
       loadingData: {
-        text: 'Идет загрузка...',
-        type: 'info',
-      },
-      nextPage: {
-        text: 'Вперед',
-      },
-      notFound: {
-        text: 'Совпадений не найдено',
-        type: 'warning',
-      },
-      pageTitle: {
-        text: '500 основных чувашских корней',
-      },
-      previousPage: {
-        text: 'Назад',
-      },
-      termsCount: {
-        text: 'Количество фраз на сайте',
-      },
-      typeSearchText: {
-        text: 'Наберите произвольный текст для поиска',
+        text: { ...defaultLabels.loadingData },
         type: 'info',
       },
     },
-    languages: ['cv', 'ru', 'sv', 'eo'],
+    languages: [],
     limit: 10,
     loading: false,
     offset: 0,
@@ -67,10 +38,21 @@ export default new Vuex.Store({
     sitekey: '6LesQHwUAAAAAPQ9vmkR5zWSYS_cjvto0u7YZrK5',
     started: false,
     status: {
-      text: 'Загрузка приложения',
+      text: { ...defaultLabels.loadingData },
       type: 'info',
     },
     totalCount: 0,
+  },
+  getters: {
+    localizedMessage: state => code => {
+      if (code === 'status') {
+        return state.status.text[state.appLanguage ? state.appLanguage : 'en'];
+      } else {
+        return state.labels[code].text[
+          state.appLanguage ? state.appLanguage : 'en'
+        ];
+      }
+    },
   },
   mutations: {
     updateAppLanguage(state, language) {
@@ -78,6 +60,7 @@ export default new Vuex.Store({
     },
     updateAppState(state, data) {
       state.about = data.about;
+      state.appLanguage = data.appLanguage;
       state.labels = data.labels;
       state.languages = data.languages;
       state.started = true;
@@ -138,6 +121,13 @@ export default new Vuex.Store({
     async getAppState({ commit, state }) {
       try {
         const { data } = await axios.get('/state');
+        if (storage) {
+          // get app language from loalStroage if exists
+          const appLanguage = await storage.getItem('appLanguage');
+          if (appLanguage) {
+            data.appLanguage = appLanguage;
+          }
+        }
         commit('updateAppState', data);
       } catch (e) {
         commit('updateStatus', state.labels.errorOccurs);
@@ -262,6 +252,12 @@ export default new Vuex.Store({
       } catch (e) {
         dispatch('showNotification', state.labels.emailSendedError);
       }
+    },
+    async setAppLanguage({ commit }, payload) {
+      if (storage) {
+        await storage.setItem('appLanguage', payload);
+      }
+      commit('updateAppLanguage', payload);
     },
     showNotification(context, payload) {
       new Noty({
