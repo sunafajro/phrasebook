@@ -32,7 +32,7 @@ let smtpConfig = {
 let transporter = nodemailer.createTransport(smtpConfig);
 
 // app languages
-const languages = ['cv', 'ru'];
+const languages = ['cv', 'en', 'eo', 'ru', 'sv'];
 
 // server params
 const PORT = process.env.PORT || 5000;
