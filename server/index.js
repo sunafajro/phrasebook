@@ -3,15 +3,18 @@ const cookieParser = require('cookie-parser');
 const csrf = require('csurf');
 const express = require('express');
 const fs = require('fs');
+const _ = require('lodash');
 const Fuse = require('fuse.js');
 const nodemailer = require('nodemailer');
 const path = require('path');
 const schedule = require('node-schedule');
 const striptags = require('striptags');
 const aboutSite = require('./about');
-const labels = require('./labels');
-const listPhrases = require('./google-api');
-const replaceToCyrillic = require('./utils');
+const {
+  getInterfaceTranslations,
+  getPhrasesData,
+  loadSavedData,
+} = require('./actions');
 
 const csrfProtection = csrf({ cookie: true });
 const app = express();
@@ -38,10 +41,17 @@ const languages = ['cv', 'en', 'eo', 'ru', 'sv'];
 const PORT = process.env.PORT || 5000;
 
 // phrases data
-let data = [];
-let cards = [];
+let data = {};
+// random phrases
+let cards = {};
+// interface translations
+let translations = {};
 
 const TMP_DB_PATH = path.resolve(process.cwd(), 'server/db.json');
+const TMP_TRANSLATIONS_PATH = path.resolve(
+  process.cwd(),
+  'server/translations.json'
+);
 
 // search options
 const options = {
@@ -50,65 +60,49 @@ const options = {
   keys: ['term'],
 };
 
-// read saved data on start
-const loadSavedData = async () => {
-  const newData = await new Promise(resolve => {
-    fs.readFile(TMP_DB_PATH, (err, content) => {
-      if (err) console.log('Error loading saved data from file. ', err);
-      return resolve(JSON.parse(content));
-    });
-  });
-  if (Array.isArray(newData) && newData.length) {
-    data = newData;
-    console.log('Loaded saved data from file.');
-  } else {
-    console.log('No data in the file.');
-  }
-};
-
-// check google spreadsheet every 5 minutes
-const j = schedule.scheduleJob('*/5 * * * *', async () => {
+// check google spreadsheet every 10 minutes
+const j = schedule.scheduleJob('*/10 * * * *', async () => {
   try {
-    const result = await listPhrases();
-    const terms = result[0];
-    const transcriptions = result[1];
-    const translations = result[2];
-    const examples = result[3];
-    const newCards = [];
-    const newData = terms.reduce((a, v, i) => {
-      const e = examples[i].split(';');
-      a.push({
-        id: i + 1,
-        term: v ? replaceToCyrillic(v.trim()) : '',
-        transcription: transcriptions[i] ? transcriptions[i].trim() : '',
-        translation: translations[i] ? translations[i].trim() : '',
-        examples: e.reduce((aa, vv) => {
-          vv = vv.trim();
-          const parts = vv.split(' — ');
-          const card = {
-            [languages[0]]: parts[0] ? replaceToCyrillic(parts[0].trim()) : '',
-            [languages[1]]: parts[1] ? parts[1].trim() : '',
-          };
-          if (parts.length === 1) console.log(`ROW ${i}. CHECK THIS: `, vv);
-          aa.push(card);
-          newCards.push(card);
-          return aa;
-        }, []),
-      });
-      return a;
-    }, []);
-    data = newData;
-    cards = newCards;
+    for (l in languages) {
+      if (languages[l] !== 'cv') {
+        const { newCards, newData } = await getPhrasesData(languages[l]);
+        _.set(data, `${languages[l]}`, newData);
+        _.set(cards, `${languages[l]}`, newCards);
+      }
+    }
     // save data to file
     await new Promise(resolve => {
-      fs.writeFile(TMP_DB_PATH, JSON.stringify(newData), err => {
-        if (err) console.log('Error writing data to temporary db. ', err);
-        console.log('Temporary data stored to ', TMP_DB_PATH);
+      fs.writeFile(TMP_DB_PATH, JSON.stringify(data), err => {
+        if (err) console.log('Error writing phrases data to file. ', err);
+        console.log(`Phrases data saved to ${TMP_DB_PATH} file.`);
         return resolve();
       });
     });
   } catch (err) {
-    console.log('Error occurs. ', err);
+    console.log('Error on updating phrases. ', err);
+  }
+});
+
+const translationUpdater = schedule.scheduleJob('*/30 * * * *', async () => {
+  try {
+    const newTranslations = await getInterfaceTranslations();
+    translations = _.cloneDeep(newTranslations);
+    // save data to file
+    await new Promise(resolve => {
+      fs.writeFile(TMP_TRANSLATIONS_PATH, JSON.stringify(translations), err => {
+        if (err)
+          console.log(
+            'Error writing interface translations data to file. ',
+            err
+          );
+        console.log(
+          `Interface translatons saved to ${TMP_TRANSLATIONS_PATH} file.`
+        );
+        return resolve();
+      });
+    });
+  } catch (err) {
+    console.log('Error on updating interface translations. ', err);
   }
 });
 
@@ -121,17 +115,18 @@ app.get('/csrf', csrfProtection, (req, res) => {
 });
 
 app.get('/phrases', (req, res) => {
-  const language = req.query.language ? req.query.language : languages[0];
-  const limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
-  const offset = req.query.offset ? parseInt(req.query.offset, 10) : 0;
-  const search = req.query.search ? req.query.search : null;
+  const termLang = _.get(req, 'query.language', 'en');
+  const dictLang = _.get(req, 'query.dictionary', 'en');
+  const limit = parseInt(_.get(req, 'query.limit', 10), 10);
+  const offset = parseInt(_.get(req, 'query.offset', 0), 10);
+  const search = _.get(req, 'query.search', null);
   if (search) {
-    if (language === languages[1]) {
+    if (termLang !== 'cv') {
       options.keys = [`translation`];
     } else {
       options.keys = [`term`];
     }
-    const fuse = new Fuse(data, options);
+    const fuse = new Fuse(data[dictLang], options);
     const result = fuse.search(search);
     return res.send({
       count: result.length,
@@ -139,8 +134,8 @@ app.get('/phrases', (req, res) => {
     });
   } else {
     return res.send({
-      count: data.length,
-      phrases: data.slice(offset, offset + limit),
+      count: data[dictLang].length,
+      phrases: data[dictLang].slice(offset, offset + limit),
     });
   }
 });
@@ -192,13 +187,24 @@ app.post('/send-email', csrfProtection, (req, res) => {
 app.get('/state', (req, res) => {
   return res.send({
     about: aboutSite,
-    labels,
+    labels: translations,
     languages,
     totalCount: data.length,
   });
 });
 
-app.listen(PORT, () => {
-  loadSavedData();
-  console.log(`Server running at ${PORT}`);
+app.listen(PORT, async () => {
+  try {
+    // loading phrases to memory
+    const newData = await loadSavedData(TMP_DB_PATH);
+    data = newData ? _.cloneDeep(newData) : {};
+    // loading translations to memory
+    const newTranslations = await loadSavedData(TMP_TRANSLATIONS_PATH);
+    translations = newTranslations ? _.cloneDeep(newTranslations) : {};
+    console.log(`Server running at ${PORT}`);
+  } catch (e) {
+    throw new Error(
+      'Server running error. ' + (e && e.message) ? e.message : ''
+    );
+  }
 });

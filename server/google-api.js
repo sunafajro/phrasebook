@@ -1,10 +1,10 @@
-const fs = require("fs");
-const path = require("path");
-const readline = require("readline");
-const { google } = require("googleapis");
+const fs = require('fs');
+const path = require('path');
+const readline = require('readline');
+const { google } = require('googleapis');
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 const CREDENTIALS_PATH = path.resolve(process.cwd(), 'server/credentials.json');
 const TOKEN_PATH = path.resolve(process.cwd(), 'server/token.json');
 
@@ -32,16 +32,16 @@ const createClient = async () => {
       });
       if (!oAuthClient) {
         const authUrl = oAuth2Client.generateAuthUrl({
-          access_type: "offline",
-          scope: SCOPES
+          access_type: 'offline',
+          scope: SCOPES,
         });
-        console.log("Authorize this app by visiting this url:", authUrl);
+        console.log('Authorize this app by visiting this url:', authUrl);
         const rl = readline.createInterface({
           input: process.stdin,
-          output: process.stdout
+          output: process.stdout,
         });
         const oAuthClientNext = await new Promise((resolve, reject) => {
-          rl.question("Enter the code from that page here: ", code => {
+          rl.question('Enter the code from that page here: ', code => {
             rl.close();
             oAuth2Client.getToken(code, (err, token) => {
               if (err) return reject(err);
@@ -49,7 +49,7 @@ const createClient = async () => {
               // Store the token to disk for later program executions
               fs.writeFile(TOKEN_PATH, JSON.stringify(token), err => {
                 if (err) console.error(err);
-                console.log("Token stored to", TOKEN_PATH);
+                console.log('Token stored to', TOKEN_PATH);
               });
               return resolve(oAuth2Client);
             });
@@ -60,28 +60,28 @@ const createClient = async () => {
         return oAuth2Client;
       }
     } catch (err) {
-      console.log("Error creating client credentials. ", err);
+      console.log('Error creating client credentials. ', err);
       return null;
     }
   } catch (err) {
-    console.log("Error on reading credentials. ", err);
+    console.log('Error on reading credentials. ', err);
     return null;
   }
 };
 
-const listPhrases = async () => {
+const getDataFromSpreadsheet = async ({ id, range, dimension }) => {
   try {
     const auth = await createClient();
-    const sheets = google.sheets({ version: "v4", auth });
+    const sheets = google.sheets({ version: 'v4', auth });
     const promise = () => {
       return new Promise((resolve, reject) => {
         sheets.spreadsheets.values.get(
           {
             // uuid of spreadsheet
-            spreadsheetId: "1waaExBtxLaczDp4araeyvv8SZrtYhG_3iVV0nPSJzCc",
+            spreadsheetId: id,
             // range
-            range: "Phrases!A2:D100",
-            majorDimension: "COLUMNS"
+            range,
+            majorDimension: dimension,
           },
           (err, res) => {
             if (err) return reject(err);
@@ -94,13 +94,13 @@ const listPhrases = async () => {
       const result = await promise();
       return result;
     } catch (err) {
-      console.log("Error on getting data from spreadshet. ", err);
+      console.log('Error on getting data from spreadshet. ', err);
       return null;
     }
   } catch (err) {
-    console.log("Error creating api client. ", err);
+    console.log('Error creating api client. ', err);
     return null;
   }
 };
 
-module.exports = listPhrases;
+module.exports = { getDataFromSpreadsheet };
