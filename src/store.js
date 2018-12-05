@@ -141,6 +141,9 @@ export default new Vuex.Store({
         if (state.current) {
           urlParams.push(`language=${state.current}`);
         }
+        if (state.appLanguage) {
+          urlParams.push(`dictionary=${state.appLanguage}`);
+        }
         if (state.limit) {
           urlParams.push(`limit=${state.limit}`);
         }
@@ -153,7 +156,7 @@ export default new Vuex.Store({
         if (urlParams.length) {
           url = url + '?' + urlParams.join('&');
         }
-        const { data } = await axios.get(url);
+        const { data } = await axios.get(encodeURI(url));
         if (data.hasOwnProperty('count')) {
           commit('updateCount', parseInt(data.count, 10));
         }
@@ -189,7 +192,15 @@ export default new Vuex.Store({
     async getRandomPhrase({ commit, state }) {
       commit('updateLoading', true);
       try {
-        const { data } = await axios.get('/random');
+        let url = `/random`;
+        let urlParams = [];
+        if (state.appLanguage) {
+          urlParams.push(`dictionary=${state.appLanguage}`);
+        }
+        if (urlParams.length) {
+          url = url + '?' + urlParams.join('&');
+        }
+        const { data } = await axios.get(encodeURI(url));
         if (data.hasOwnProperty('card')) {
           commit('updateRandomPhrase', {
             loading: false,
