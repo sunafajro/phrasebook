@@ -1,206 +1,114 @@
 {
   "aboutProject": {
-    "text": {
-      "cv": "О проекте",
-      "en": "About",
-      "eo": "Pri la projekto",
-      "ru": "О проекте",
-      "sv": "About"
-    }
+    "text": { "cv": "О проекте", "ru": "О проекте", "eo": "Pri la projekto" }
   },
   "forgetPhrase": {
-    "text": {
-      "cv": "Не помню",
-      "en": "Forget",
-      "eo": "Forgesis",
-      "ru": "Не помню",
-      "sv": "Forget"
-    }
+    "text": { "cv": "Не помню", "ru": "Не помню", "eo": "Forgesis" }
   },
   "footerLabel": {
     "text": {
       "cv": "© «Хавал» чăваш халăх пĕрлешĕвĕ 2018.",
-      "en": "© «Khaval» Chuvash movement 2018.",
-      "eo": "© Ĉuvaŝa socia organizo «Ĥaval» 2018.",
       "ru": "© Чувашская общественная организация «Хавал» 2018.",
-      "sv": "© «Khaval» Chuvash movement 2018."
+      "eo": "© Ĉuvaŝa socia organizo «Ĥaval» 2018."
     }
   },
   "emailOrPhone": {
     "text": {
       "cv": "Э-почта или телефон",
-      "en": "E-mail or phone",
-      "eo": "E-poŝto aŭ telefono",
       "ru": "Э-почта или телефон",
-      "sv": "E-mail or phone"
+      "eo": "E-poŝto aŭ telefono"
     }
   },
   "emailSendedError": {
     "text": {
       "cv": "Ошибка при отправке письма",
-      "en": "Erron on sending the letter",
-      "eo": "Eraro dum letero sendado",
       "ru": "Ошибка при отправке письма",
-      "sv": "Erron on sending the letter"
+      "eo": "Eraro dum letero sendado"
     },
     "type": "danger"
   },
   "emailSendedSuccess": {
     "text": {
       "cv": "Ваше письмо успешно отправлено",
-      "en": "Your letter successfully sended",
-      "eo": "Via letero estis sukcese sendita",
       "ru": "Ваше письмо успешно отправлено",
-      "sv": "Your letter successfully sended"
+      "eo": "Via letero estis sukcese sendita"
     },
     "type": "success"
   },
   "errorOccurs": {
     "text": {
       "cv": "Произошла ошибка.",
-      "en": "An error occurs.",
-      "eo": "Eraro okazis.",
       "ru": "Произошла ошибка.",
-      "sv": "Det har uppstått ett fel."
+      "eo": "Eraro okazis."
     },
     "type": "danger"
   },
-  "homePage": {
-    "text": {
-      "cv": "Тепел",
-      "en": "Home",
-      "eo": "Hejmo",
-      "ru": "Главная",
-      "sv": "Home"
-    }
-  },
-  "letterText": {
-    "text": {
-      "cv": "Текст",
-      "en": "Text",
-      "eo": "Teksto",
-      "ru": "Текст",
-      "sv": "Text"
-    }
-  },
+  "homePage": { "text": { "cv": "Тепел", "ru": "Главная", "eo": "Hejmo" } },
+  "letterText": { "text": { "cv": "Текст", "ru": "Текст", "eo": "Teksto" } },
   "loadingData": {
-    "text": {
-      "cv": "Загрузка...",
-      "en": "Loading...",
-      "eo": "Ŝargado...",
-      "ru": "Загрузка...",
-      "sv": "Laddar..."
-    },
+    "text": { "cv": "Загрузка...", "ru": "Загрузка...", "eo": "Ŝargado..." },
     "type": "info"
   },
-  "nextPage": {
-    "text": {
-      "cv": "Вперед",
-      "en": "Next",
-      "eo": "Antaŭen",
-      "ru": "Вперед",
-      "sv": "Nästa"
-    }
-  },
+  "nextPage": { "text": { "cv": "Вперед", "ru": "Вперед", "eo": "Antaŭen" } },
   "notFound": {
     "text": {
       "cv": "Совпадений не найдено",
-      "en": "Nothing found",
-      "eo": "Nenio trovita",
       "ru": "Совпадений не найдено",
-      "sv": "Inga resultat hittades"
+      "eo": "Nenio trovita"
     },
     "type": "warning"
   },
   "pageTitle": {
     "text": {
       "cv": "Чӑвашла калаҫура чи кирлӗ 500 тымар сӑмах",
-      "en": "500 основных чувашских корней",
-      "eo": "La plej necesaj 500 vortradikoj de la ĉuvaŝa lingvo",
       "ru": "500 основных чувашских корней",
-      "sv": "De 500 viktigaste tjuvasjiska ordstammarna"
+      "eo": "La plej necesaj 500 vortradikoj de la ĉuvaŝa lingvo"
     }
   },
-  "previousPage": {
-    "text": {
-      "cv": "Назад",
-      "en": "Back",
-      "eo": "Reen",
-      "ru": "Назад",
-      "sv": "Föregående"
-    }
-  },
+  "previousPage": { "text": { "cv": "Назад", "ru": "Назад", "eo": "Reen" } },
   "randomPhrase": {
     "text": {
       "cv": "Случайная фраза",
-      "en": "Random phrase",
-      "eo": "Hazarda frazo",
       "ru": "Случайная фраза",
-      "sv": "Random phrase"
+      "eo": "Hazarda frazo"
     }
   },
   "rememberPhrase": {
-    "text": {
-      "cv": "Помню",
-      "en": "Remember",
-      "eo": "Memoras",
-      "ru": "Помню",
-      "sv": "Remember"
-    }
+    "text": { "cv": "Помню", "ru": "Помню", "eo": "Memoras" }
   },
   "sendEmail": {
-    "text": {
-      "cv": "Отправить",
-      "en": "Send",
-      "eo": "Sendi",
-      "ru": "Отправить",
-      "sv": "Send"
-    }
+    "text": { "cv": "Отправить", "ru": "Отправить", "eo": "Sendi" }
   },
   "selectAnLanguage": {
     "text": {
       "cv": "Выберите язык.",
-      "en": "Select an language.",
-      "eo": "Elektu lingvon.",
       "ru": "Выберите язык.",
-      "sv": "Select an language."
+      "eo": "Elektu lingvon."
     }
   },
   "termsCount": {
     "text": {
       "cv": "Количество фраз на сайте",
-      "en": "Number of phrases on the site",
-      "eo": "Nombro da frazoj en la retejo",
       "ru": "Количество фраз на сайте",
-      "sv": "Antal tillgängliga uppslagsord"
+      "eo": "Nombro da frazoj en la retejo"
     }
   },
   "typeSearchText": {
     "text": {
       "cv": "Наберите произвольный текст для поиска",
-      "en": "Enter some text for searching",
-      "eo": "Entajpu tekston por serĉi",
       "ru": "Наберите произвольный текст для поиска",
-      "sv": "Skriv något att söka"
+      "eo": "Entajpu tekston por serĉi"
     },
     "type": "info"
   },
   "writeLetter": {
     "text": {
       "cv": "Ҫыру ҫыр",
-      "en": "Write to us",
-      "eo": "Skribi leteron",
       "ru": "Написать письмо",
-      "sv": "Write to us"
+      "eo": "Skribi leteron"
     }
   },
   "yourName": {
-    "text": {
-      "cv": "Ваше имя",
-      "en": "Your name",
-      "eo": "Via nomo",
-      "ru": "Ваше имя",
-      "sv": "Your name"
-    }
+    "text": { "cv": "Ваше имя", "ru": "Ваше имя", "eo": "Via nomo" }
   }
 }

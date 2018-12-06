@@ -35,7 +35,7 @@ let smtpConfig = {
 let transporter = nodemailer.createTransport(smtpConfig);
 
 // app languages
-const languages = ['cv', 'en', 'eo', 'ru', 'sv'];
+const languages = ['cv', 'ru', 'eo'];
 
 // server params
 const PORT = process.env.PORT || 5000;
@@ -56,7 +56,7 @@ const TMP_TRANSLATIONS_PATH = path.resolve(
 // search options
 const options = {
   shouldSort: true,
-  threshold: 0.3,
+  threshold: 0.2,
   keys: ['term'],
 };
 
@@ -115,18 +115,25 @@ app.get('/csrf', csrfProtection, (req, res) => {
 });
 
 app.get('/phrases', (req, res) => {
-  const termLang = _.get(req, 'query.language', 'en');
-  const dictLang = _.get(req, 'query.dictionary', 'en');
+  const index = languages.indexOf('cv');
+  const language = index === 0 ? languages[index + 1] : languages[0];
+  const termLang = _.get(req, 'query.language', language);
+  const dictLang = _.get(req, 'query.dictionary', language);
   const limit = parseInt(_.get(req, 'query.limit', 10), 10);
   const offset = parseInt(_.get(req, 'query.offset', 0), 10);
   const search = _.get(req, 'query.search', null);
-  if (search) {
+  if (dictLang === 'cv') {
+    options.keys = ['term', 'translation'];
+  } else {
     if (termLang !== 'cv') {
-      options.keys = [`translation`];
+      options.keys = ['translation'];
     } else {
-      options.keys = [`term`];
+      options.keys = ['term'];
     }
-    const fuse = new Fuse(data[dictLang], options);
+  }
+  const dictionary = dictLang !== 'cv' ? dictLang : termLang;
+  if (search) {
+    const fuse = new Fuse(data[dictionary], options);
     const result = fuse.search(search);
     return res.send({
       count: result.length,
@@ -134,8 +141,8 @@ app.get('/phrases', (req, res) => {
     });
   } else {
     return res.send({
-      count: data[dictLang].length,
-      phrases: data[dictLang].slice(offset, offset + limit),
+      count: data[dictionary].length,
+      phrases: data[dictionary].slice(offset, offset + limit),
     });
   }
 });
