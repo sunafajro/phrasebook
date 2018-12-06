@@ -26,6 +26,29 @@
               <router-link class="nav-link" to="/about">{{ localizedMessage('aboutProject') }}</router-link>
             </li>
           </ul>
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdownMenuLink"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >{{ appLanguage }}</a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a
+                  class="dropdown-item"
+                  href="#"
+                  :key="l"
+                  v-for="l in languages"
+                  @click.prevent="setAppLanguage(l)"
+                  v-if="l !== appLanguage"
+                >{{ l }}</a>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>
@@ -33,14 +56,18 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default {
   computed: {
+    ...mapState(['appLanguage', 'languages']),
     ...mapGetters(['localizedMessage']),
     currentRoute() {
       return this.$route.path;
     },
+  },
+  methods: {
+    ...mapActions(['setAppLanguage']),
   },
 };
 </script>

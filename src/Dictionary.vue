@@ -45,8 +45,8 @@
             </div>
             <div style="style: font-size: 14px">
               <span :key="'examples-' + item.id + '-' + i" v-for="(e, i) in item.examples">
-                <span style="color:#920505">{{ e[languages[0]] }}</span> —
-                <span style="color:#0a6482">{{ e[languages[1]] }}</span>
+                <span style="color:#920505">{{ e['cv'] }}</span> —
+                <span style="color:#0a6482">{{ e[examplesLanguage] }}</span>
                 {{ ". " }}
               </span>
             </div>
@@ -68,7 +68,7 @@ export default {
   computed: {
     ...mapState([
       'count',
-      'languages',
+      'current',
       'limit',
       'loading',
       'offset',
@@ -76,6 +76,17 @@ export default {
       'status',
     ]),
     ...mapGetters(['localizedMessage']),
+    examplesLanguage() {
+      const phrase = this.phrases[0];
+      if (phrase) {
+        const example = phrase.examples[0];
+        if (example) {
+          const langs = Object.keys(example);
+          return langs.filter(l => l != 'cv')[0];
+        }
+      }
+      return this.current;
+    },
   },
   async created() {
     await this.getPhrases();

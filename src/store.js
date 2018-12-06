@@ -61,6 +61,7 @@ export default new Vuex.Store({
     updateAppState(state, data) {
       state.about = data.about;
       state.appLanguage = data.appLanguage;
+      state.current = data.current;
       state.labels = data.labels;
       state.languages = data.languages;
       state.started = true;
@@ -88,9 +89,8 @@ export default new Vuex.Store({
     updateCount(state, data) {
       state.count = data;
     },
-    updateLanguage(state) {
-      const i = state.languages.indexOf(state.current);
-      state.current = i === 0 ? state.languages[1] : state.languages[0];
+    updateLanguage(state, language) {
+      state.current = language;
     },
     updateLoading(state, data) {
       state.loading = data;
@@ -122,10 +122,19 @@ export default new Vuex.Store({
       try {
         const { data } = await axios.get('/state');
         if (storage) {
-          // get app language from loalStroage if exists
+          // get app language from loalStorage if exists
           const appLanguage = await storage.getItem('appLanguage');
           if (appLanguage) {
             data.appLanguage = appLanguage;
+            if (appLanguage === 'cv') {
+              const index = data.languages.indexOf('cv');
+              data.current =
+                index === -1 || index > 0
+                  ? data.languages[0]
+                  : data.languages[index + 1];
+            } else {
+              data.current = appLanguage;
+            }
           }
         }
         commit('updateAppState', data);
@@ -264,11 +273,29 @@ export default new Vuex.Store({
         dispatch('showNotification', state.labels.emailSendedError);
       }
     },
-    async setAppLanguage({ commit }, payload) {
+    async setAppLanguage({ commit, dispatch, state }, payload) {
       if (storage) {
         await storage.setItem('appLanguage', payload);
       }
       commit('updateAppLanguage', payload);
+      if (payload === 'cv') {
+        const index = state.languages.indexOf('cv');
+        commit(
+          'updateLanguage',
+          index === -1 || index > 0
+            ? state.languages[0]
+            : state.languages[index + 1]
+        );
+      } else {
+        commit('updateLanguage', payload);
+      }
+      await dispatch('getPhrases');
+    },
+    setSearchLanguage({ commit, dispatch, state }, payload) {
+      commit('updateLanguage', payload);
+      if (state.appLanguage === 'cv') {
+        dispatch('getPhrases');
+      }
     },
     showNotification(context, payload) {
       new Noty({
