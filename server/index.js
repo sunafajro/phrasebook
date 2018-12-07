@@ -63,6 +63,10 @@ const options = {
 // check google spreadsheet every 10 minutes
 const j = schedule.scheduleJob('*/10 * * * *', async () => {
   try {
+        // clear previous phrases
+        data = {};
+        cards = {};
+        // get phrases by language
     for (l in languages) {
       if (languages[l] !== 'cv') {
         const { newCards, newData } = await getPhrasesData(languages[l]);
@@ -82,8 +86,8 @@ const j = schedule.scheduleJob('*/10 * * * *', async () => {
     console.log('Error on updating phrases. ', err);
   }
 });
-
-const translationUpdater = schedule.scheduleJob('*/30 * * * *', async () => {
+// check google spreadsheet every 10 minutes
+const translationUpdater = schedule.scheduleJob('*/10 * * * *', async () => {
   try {
     const newTranslations = await getInterfaceTranslations();
     translations = _.cloneDeep(newTranslations);
@@ -132,28 +136,49 @@ app.get('/phrases', (req, res) => {
     }
   }
   const dictionary = dictLang !== 'cv' ? dictLang : termLang;
-  if (search) {
-    const fuse = new Fuse(data[dictionary], options);
-    const result = fuse.search(search);
-    return res.send({
-      count: result.length,
-      phrases: result.slice(offset, offset + limit),
-    });
+  if (data.hasOwnProperty(dictionary)) {
+    if (search) {
+      const fuse = new Fuse(data[dictionary], options);
+      const result = fuse.search(search);
+      return res.send({
+        count: result.length,
+        phrases: result.slice(offset, offset + limit),
+      });
+    } else {
+      return res.send({
+        count: data[dictionary].length,
+        phrases: data[dictionary].slice(offset, offset + limit),
+      });
+    }
   } else {
     return res.send({
-      count: data[dictionary].length,
-      phrases: data[dictionary].slice(offset, offset + limit),
+      count: 0,
+      phrases: [],
     });
   }
 });
 
 app.get('/random', (req, res) => {
+  const index = languages.indexOf('cv');
+  const language = index === 0 ? languages[index + 1] : languages[0];
+  const dictLang = _.get(req, 'query.dictionary', language);
+  const dictionary = dictLang !== 'cv' ? dictLang : language;
   const min = 0;
-  const max = cards.length + 1;
-  const num = Math.floor(Math.random() * (max - min)) + min;
-  return res.send({
-    card: cards[num],
-  });
+  if (
+    cards.hasOwnProperty(dictionary) &&
+    Array.isArray(cards[dictionary]) &&
+    cards[dictionary].length
+  ) {
+    const max = cards[dictionary].length + 1;
+    const num = Math.floor(Math.random() * (max - min)) + min;
+    return res.send({
+      card: _.get(cards, `${dictionary}.${num}`, null),
+    });
+  } else {
+    return res.send({
+      card: null,
+    });
+  }
 });
 
 app.post('/send-email', csrfProtection, (req, res) => {
