@@ -210,7 +210,7 @@ export default new Vuex.Store({
           url = url + '?' + urlParams.join('&');
         }
         const { data } = await axios.get(encodeURI(url));
-        if (data.hasOwnProperty('card')) {
+        if (data.hasOwnProperty('card') && data.card) {
           commit('updateRandomPhrase', {
             loading: false,
             phrase: data.card,
