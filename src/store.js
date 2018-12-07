@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import { get as getVal } from 'lodash';
 import axios from 'axios';
 import Noty from 'noty';
 import { getCSRF } from './utils';
@@ -45,12 +46,11 @@ export default new Vuex.Store({
   },
   getters: {
     localizedMessage: state => code => {
+      const lang = state.appLanguage ? state.appLanguage : 'en';
       if (code === 'status') {
-        return state.status.text[state.appLanguage ? state.appLanguage : 'en'];
+        return getVal(state, 'status.text.' + lang, '');
       } else {
-        return state.labels[code].text[
-          state.appLanguage ? state.appLanguage : 'en'
-        ];
+        return getVal(state, 'labels.' + code + '.text.' + lang, '');
       }
     },
   },
