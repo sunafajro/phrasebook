@@ -23,6 +23,12 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static(path.resolve(process.cwd(), 'public')));
 
+// recaptcha keys
+const recaptcha = {
+  client: '',
+  server: '',
+};
+
 let smtpConfig = {
   host: '',
   port: 465,
@@ -35,7 +41,7 @@ let smtpConfig = {
 let transporter = nodemailer.createTransport(smtpConfig);
 
 // app languages
-const languages = ['cv', 'ru', 'eo'];
+const languages = ['cv', 'ru', 'eo', 'sv'];
 
 // server params
 const PORT = process.env.PORT || 5000;
@@ -181,18 +187,37 @@ app.get('/random', (req, res) => {
   }
 });
 
-app.post('/send-email', csrfProtection, (req, res) => {
-  const fromEmail =
-    req && req.body && req.body.fromEmail ? req.body.fromEmail : '';
-  const fromName =
-    req && req.body && req.body.fromName ? req.body.fromName : '';
-  const emailText =
-    req && req.body && req.body.emailText ? req.body.emailText : '';
-  if (fromEmail && fromName && emailText) {
-    return transporter.verify((error, success) => {
-      if (error) {
-        res.status(500).send({ status: 'error' });
-      } else {
+app.post('/send-email', csrfProtection, async (req, res) => {
+  const fromEmail = _.get(req, 'body.fromEmail', '');
+  const fromName = _.get(req, 'body.fromName', '');
+  const emailText = _.get(req, 'body.emailText', '');
+  const responseToken = _.get(req, 'body.responseToken', '');
+  if (fromEmail && fromName && emailText && responseToken) {
+    try {
+      const { data } = await axios.post(
+        encodeURI(
+          'https://www.google.com/recaptcha/api/siteverify?secret=' +
+            recaptcha.server +
+            '&response=' +
+            responseToken
+        )
+      );
+      if (data.success) {
+        await new Promise((resolve, reject) => {
+          return transporter.verify(e => {
+            if (e) {
+              return reject(e);
+            } else {
+              return resolve(true);
+            }
+          });
+        }).catch(e => {
+          throw new Error(
+            'Ошибка транспорта отправки писем. ' + (e && e.message)
+              ? e.message
+              : ''
+          );
+        });
         let text = `<p><b>От кого:</b> ${fromName} <${fromEmail}></p>`;
         text = text + `<p><b>Текст письма:</b></p> ${striptags(emailText)}`;
         const message = {
@@ -202,17 +227,30 @@ app.post('/send-email', csrfProtection, (req, res) => {
           subject: '[] Письмо с сайта!',
           html: text,
         };
-        transporter.sendMail(message, (error, info) => {
-          if (error) {
-            res.status(500).send({ status: 'error' });
-          } else {
-            res.send({ status: 'success' });
-          }
+        await new Promise((resolve, reject) => {
+          return transporter.sendMail(message, e => {
+            if (e) {
+              return reject(e);
+            } else {
+              return resolve(true);
+            }
+          });
+        }).catch(e => {
+          throw new Error(
+            'Ошибка отправки письма. ' + (e && e.message) ? e.message : ''
+          );
         });
+        return res.send({ status: 'success' });
+      } else {
+        throw new Error('Ошибка валидации капчи.');
       }
-    });
+    } catch (e) {
+      console.log('Ошибка при отправке письма.', e);
+      return res.status(500).send({ status: 'error' });
+    }
   } else {
-    res.status(400).send({ status: 'error' });
+    console.log('Переданы не все аргументы.');
+    return res.status(400).send({ status: 'error' });
   }
 });
 
@@ -221,6 +259,7 @@ app.get('/state', (req, res) => {
     about: aboutSite,
     labels: translations,
     languages,
+    recaptchaSecret: recaptcha.client,
     totalCount: data.length,
   });
 });
