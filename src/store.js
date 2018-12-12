@@ -36,7 +36,7 @@ export default new Vuex.Store({
     randomPhrase: {},
     search: '',
     showContactForm: null,
-    sitekey: '6LesQHwUAAAAAPQ9vmkR5zWSYS_cjvto0u7YZrK5',
+    sitekey: '',
     started: false,
     status: {
       text: { ...defaultLabels.loadingData },
@@ -64,6 +64,7 @@ export default new Vuex.Store({
       state.current = data.current;
       state.labels = data.labels;
       state.languages = data.languages;
+      state.sitekey = data.recaptchaSecret;
       state.started = true;
       state.status = data.labels.typeSearchText;
       state.totalCount = data.totalCount;
@@ -245,7 +246,7 @@ export default new Vuex.Store({
       });
       await dispatch('getPhrases');
     },
-    async sendingEmail({ commit, dispatch, state }) {
+    async sendingEmail({ commit, dispatch, state }, payload) {
       try {
         const { data: token } = await getCSRF();
         await axios.post(
@@ -254,6 +255,7 @@ export default new Vuex.Store({
             fromEmail: state.fromEmail,
             fromName: state.fromName,
             emailText: state.emailText,
+            responseToken: payload,
           },
           {
             credentials: 'same-origin',
@@ -297,10 +299,10 @@ export default new Vuex.Store({
         dispatch('getPhrases');
       }
     },
-    showNotification(context, payload) {
+    showNotification({ state }, payload) {
       new Noty({
         theme: 'bootstrap-v4',
-        text: payload.text,
+        text: payload.text[state.appLanguage],
         timeout: 2000,
         type: payload.type,
       }).show();

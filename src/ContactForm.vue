@@ -8,16 +8,10 @@
       <b>{{ localizedMessage('letterText') }}:</b>
       <textarea class="form-control form-control-sm" rows="6" v-model="emailText"></textarea>
       <div class="text-right" style="margin-top: 0.5rem">
-        <vue-recaptcha
-          ref="invisibleRecaptcha"
-          @verify="onVerify"
-          @expired="onExpired"
-          size="invisible"
-          :sitekey="sitekey"
-        ></vue-recaptcha>
+        <vue-recaptcha ref="recaptcha" @verify="onVerify" @expired="onExpired" :sitekey="sitekey"></vue-recaptcha>
         <button
           class="btn btn-info"
-          :disabled="!fromName || !fromEmail || !emailText"
+          :disabled="!fromName || !fromEmail || !emailText || !verified"
           type="submit"
         >{{ localizedMessage('sendEmail') }}</button>
       </div>
@@ -59,17 +53,27 @@ export default {
       },
     },
   },
+  data() {
+    return {
+      responseToken: '',
+      verified: false,
+    };
+  },
   methods: {
-    ...mapActions(['sendingEmail', 'showNotification']),
+    ...mapActions(['sendingEmail']),
     onExpired() {
-      this.$refs.invisibleRecaptcha.reset();
+      this.$refs.recaptcha.reset();
     },
     onSubmit() {
-      this.$refs.invisibleRecaptcha.execute();
+      this.sendingEmail(this.responseToken);
+      this.verified = false;
+      this.responseToken = '';
+      this.$refs.recaptcha.reset();
     },
-    onVerify() {
-      this.$refs.invisibleRecaptcha.reset();
-      this.sendingEmail();
+    onVerify(e) {
+      // eslint-disable-next-line
+      this.responseToken = e;
+      this.verified = true;
     },
   },
 };
