@@ -1,1 +1,226 @@
-{"aboutProject":{"text":{"cv":"О проекте","ru":"О проекте","eo":"Pri la projekto","sv":"Om projektet"}},"checkPhrase":{"text":{"cv":"Проверить","ru":"Проверить","eo":"Kontroli","sv":"Check"}},"forgetPhrase":{"text":{"cv":"Не помню","ru":"Не помню","eo":"Forgesis","sv":"Minns inte"}},"footerLabel":{"text":{"cv":"© «Хавал» чăваш халăх пĕрлешĕвĕ 2018.","ru":"© Чувашская общественная организация «Хавал» 2018.","eo":"© Ĉuvaŝa socia organizo «Ĥaval» 2018.","sv":"© Tjuvasjiska rörelsen \"Khaval\" 2018."}},"emailOrPhone":{"text":{"cv":"Э-почта или телефон","ru":"Э-почта или телефон","eo":"E-poŝto aŭ telefono","sv":"E-mail eller telefonnummer"}},"emailSendedError":{"text":{"cv":"Ошибка при отправке письма","ru":"Ошибка при отправке письма","eo":"Eraro dum letero sendado","sv":"Meddelandet kunde tyvärr inte skickas"},"type":"danger"},"emailSendedSuccess":{"text":{"cv":"Ваше письмо успешно отправлено","ru":"Ваше письмо успешно отправлено","eo":"Via letero estis sukcese sendita","sv":"Ditt meddelande har skickats"},"type":"success"},"errorOccurs":{"text":{"cv":"Произошла ошибка.","ru":"Произошла ошибка.","eo":"Eraro okazis.","sv":"Det har uppstått ett fel"},"type":"danger"},"homePage":{"text":{"cv":"Тепел","ru":"Главная","eo":"Hejmo","sv":"Hem"}},"letterText":{"text":{"cv":"Текст","ru":"Текст","eo":"Teksto","sv":"Text"}},"loadingData":{"text":{"cv":"Загрузка...","ru":"Загрузка...","eo":"Ŝargado...","sv":"Laddar..."},"type":"info"},"nextPage":{"text":{"cv":"Вперед","ru":"Вперед","eo":"Antaŭen","sv":"Nästa"}},"notFound":{"text":{"cv":"Совпадений не найдено","ru":"Совпадений не найдено","eo":"Nenio trovita","sv":"Inga resultat hittades"},"type":"warning"},"pageTitle":{"text":{"cv":"Чӑвашла калаҫура чи кирлӗ 500 тымар сӑмах","ru":"500 основных чувашских корней","eo":"La plej necesaj 500 vortradikoj de la ĉuvaŝa lingvo","sv":"De 500 viktigaste tjuvasjiska ordstammarna"}},"previousPage":{"text":{"cv":"Назад","ru":"Назад","eo":"Reen","sv":"Föregående"}},"randomPhrase":{"text":{"cv":"Случайная фраза","ru":"Случайная фраза","eo":"Hazarda frazo","sv":"Slumpmässig fras"}},"rememberPhrase":{"text":{"cv":"Помню","ru":"Помню","eo":"Memoras","sv":"Jag vet"}},"sendEmail":{"text":{"cv":"Отправить","ru":"Отправить","eo":"Sendi","sv":"Skicka"}},"selectAnLanguage":{"text":{"cv":"Выберите язык.","ru":"Выберите язык.","eo":"Elektu lingvon.","sv":"Välj språk"}},"termsCount":{"text":{"cv":"Количество фраз на сайте","ru":"Количество фраз на сайте","eo":"Nombro da frazoj en la retejo","sv":"Antal uppslagsord"}},"typeSearchText":{"text":{"cv":"Наберите произвольный текст для поиска","ru":"Наберите произвольный текст для поиска","eo":"Entajpu tekston por serĉi","sv":"Sök..."},"type":"info"},"writeLetter":{"text":{"cv":"Ҫыру ҫыр","ru":"Написать письмо","eo":"Lasu mesaĝon","sv":"Skriv till oss"}},"yourName":{"text":{"cv":"Ваше имя","ru":"Ваше имя","eo":"Via nomo","sv":"Ditt namn"}}}
+{
+    "aboutProject": {
+      "text": {
+        "cv": "О проекте",
+        "ru": "О проекте",
+        "eo": "Pri la projekto",
+        "sv": "Om projektet",
+        "fr": "A propos"
+      }
+    },
+    "checkPhrase": {
+      "text": {
+        "cv": "Проверить",
+        "ru": "Проверить",
+        "eo": "Kontroli",
+        "sv": "Check",
+        "fr": "Vérifier"
+      }
+    },
+    "forgetPhrase": {
+      "text": {
+        "cv": "Не помню",
+        "ru": "Не помню",
+        "eo": "Forgesis",
+        "sv": "Minns inte",
+        "fr": "Oublié"
+      }
+    },
+    "footerLabel": {
+      "text": {
+        "cv": "© «Хавал» чăваш халăх пĕрлешĕвĕ 2020.",
+        "ru": "© Чувашская общественная организация «Хавал» 2020.",
+        "eo": "© Ĉuvaŝa socia organizo «Ĥaval» 2020.",
+        "sv": "© Tjuvasjiska rörelsen «Khaval» 2020.",
+        "fr": "© Association Tchouvache «Khaval» 2018."
+      }
+    },
+    "emailOrPhone": {
+      "text": {
+        "cv": "Э-почта или телефон",
+        "ru": "Э-почта или телефон",
+        "eo": "E-poŝto aŭ telefono",
+        "sv": "E-mail eller telefonnummer",
+        "fr": "E-mail ou numéro de téléphone"
+      }
+    },
+    "emailSendedError": {
+      "text": {
+        "cv": "Ошибка при отправке письма",
+        "ru": "Ошибка при отправке письма",
+        "eo": "Eraro dum letero sendado",
+        "sv": "Meddelandet kunde tyvärr inte skickas",
+        "fr": "Erreur lors d'envoi"
+      },
+      "type": "danger"
+    },
+    "emailSendedSuccess": {
+      "text": {
+        "cv": "Ваше письмо успешно отправлено",
+        "ru": "Ваше письмо успешно отправлено",
+        "eo": "Via letero estis sukcese sendita",
+        "sv": "Ditt meddelande har skickats",
+        "fr": "Votre mail a bien été envoyé"
+      },
+      "type": "success"
+    },
+    "errorOccurs": {
+      "text": {
+        "cv": "Произошла ошибка.",
+        "ru": "Произошла ошибка.",
+        "eo": "Eraro okazis.",
+        "sv": "Det har uppstått ett fel",
+        "fr": "Une erreure s'est produite"
+      },
+      "type": "danger"
+    },
+    "homePage": {
+      "text": {
+        "cv": "Тепел",
+        "ru": "Главная",
+        "eo": "Hejmo",
+        "sv": "Hem",
+        "fr": "Accueil"
+      }
+    },
+    "letterText": {
+      "text": {
+        "cv": "Текст",
+        "ru": "Текст",
+        "eo": "Teksto",
+        "sv": "Text",
+        "fr": "Texte"
+      }
+    },
+    "loadingData": {
+      "text": {
+        "cv": "Загрузка...",
+        "ru": "Загрузка...",
+        "eo": "Ŝargado...",
+        "sv": "Laddar...",
+        "fr": "En train de charger…"
+      },
+      "type": "info"
+    },
+    "nextPage": {
+      "text": {
+        "cv": "Вперед",
+        "ru": "Вперед",
+        "eo": "Antaŭen",
+        "sv": "Nästa",
+        "fr": "Suivant"
+      }
+    },
+    "notFound": {
+      "text": {
+        "cv": "Совпадений не найдено",
+        "ru": "Совпадений не найдено",
+        "eo": "Nenio trovita",
+        "sv": "Inga resultat hittades",
+        "fr": "Aucun résultat"
+      },
+      "type": "warning"
+    },
+    "pageTitle": {
+      "text": {
+        "cv": "Чӑвашла калаҫура чи кирлӗ 500 тымар сӑмах",
+        "ru": "500 основных чувашских корней",
+        "eo": "La plej necesaj 500 vortradikoj de la ĉuvaŝa lingvo",
+        "sv": "De 500 viktigaste tjuvasjiska ordstammarna",
+        "fr": "500 racines principales en Tchouvache"
+      }
+    },
+    "previousPage": {
+      "text": {
+        "cv": "Назад",
+        "ru": "Назад",
+        "eo": "Reen",
+        "sv": "Föregående",
+        "fr": "Retour"
+      }
+    },
+    "randomPhrase": {
+      "text": {
+        "cv": "Случайная фраза",
+        "ru": "Случайная фраза",
+        "eo": "Hazarda frazo",
+        "sv": "Slumpmässig fras",
+        "fr": "Phrase aléatoire"
+      }
+    },
+    "rememberPhrase": {
+      "text": {
+        "cv": "Помню",
+        "ru": "Помню",
+        "eo": "Memoras",
+        "sv": "Jag vet",
+        "fr": "Rappel"
+      }
+    },
+    "sendEmail": {
+      "text": {
+        "cv": "Отправить",
+        "ru": "Отправить",
+        "eo": "Sendi",
+        "sv": "Skicka",
+        "fr": "Envoyer"
+      }
+    },
+    "selectAnLanguage": {
+      "text": {
+        "cv": "Выберите язык.",
+        "ru": "Выберите язык.",
+        "eo": "Elektu lingvon.",
+        "sv": "Välj språk",
+        "fr": "Choisir la langue"
+      }
+    },
+    "termsCount": {
+      "text": {
+        "cv": "Количество фраз на сайте",
+        "ru": "Количество фраз на сайте",
+        "eo": "Nombro da frazoj en la retejo",
+        "sv": "Antal uppslagsord",
+        "fr": "Nombre de phrases sur le site"
+      }
+    },
+    "typeSearchText": {
+      "text": {
+        "cv": "Наберите произвольный текст для поиска",
+        "ru": "Наберите произвольный текст для поиска",
+        "eo": "Entajpu tekston por serĉi",
+        "sv": "Sök...",
+        "fr": "Rechercher…"
+      },
+      "type": "info"
+    },
+    "writeLetter": {
+      "text": {
+        "cv": "Ҫыру ҫыр",
+        "ru": "Написать письмо",
+        "eo": "Lasu mesaĝon",
+        "sv": "Skriv till oss",
+        "fr": "Nous écrire"
+      }
+    },
+    "yourName": {
+      "text": {
+        "cv": "Ваше имя",
+        "ru": "Ваше имя",
+        "eo": "Via nomo",
+        "sv": "Ditt namn",
+        "fr": "Votre nom"
+      }
+    },
+    "waitForPrepareAudio": {
+      "text": {
+        "cv": "Подождите, аудио подготавливается!",
+        "ru": "Подождите, аудио подготавливается!",
+        "eo": "Atendu, ni preparas aŭdajxon!",
+        "sv": "Please wait, we prepare audio!",
+        "fr": "Please wait, we prepare audio!"
+      },
+      "type": "success"
+    }
+  }
+  

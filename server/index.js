@@ -1,3 +1,4 @@
+const axios = require('axios');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const csrf = require('csurf');
@@ -31,7 +32,7 @@ const recaptcha = {
 
 let smtpConfig = {
   host: '',
-  port: 465,
+  port: 25,
   secure: true,
   auth: {
     user: '',
@@ -41,7 +42,7 @@ let smtpConfig = {
 let transporter = nodemailer.createTransport(smtpConfig);
 
 // app languages
-const languages = ['cv', 'ru', 'eo', 'sv'];
+const languages = ['cv', 'ru', 'eo', 'sv', 'fr'];
 
 // server params
 const PORT = process.env.PORT || 5000;
@@ -53,11 +54,9 @@ let cards = {};
 // interface translations
 let translations = {};
 
-const TMP_DB_PATH = path.resolve(process.cwd(), 'server/db.json');
-const TMP_TRANSLATIONS_PATH = path.resolve(
-  process.cwd(),
-  'server/translations.json'
-);
+const TMP_CARDS_PATH = path.resolve(process.cwd(), 'cards.json');
+const TMP_DB_PATH = path.resolve(process.cwd(), 'db.json');
+const TMP_TRANSLATIONS_PATH = path.resolve(process.cwd(), 'translations.json');
 
 // search options
 const options = {
@@ -67,54 +66,62 @@ const options = {
 };
 
 // check google spreadsheet every 10 minutes
-const j = schedule.scheduleJob('*/10 * * * *', async () => {
-  try {
-        // clear previous phrases
-        data = {};
-        cards = {};
-        // get phrases by language
-    for (l in languages) {
-      if (languages[l] !== 'cv') {
-        const { newCards, newData } = await getPhrasesData(languages[l]);
-        _.set(data, `${languages[l]}`, newData);
-        _.set(cards, `${languages[l]}`, newCards);
-      }
-    }
-    // save data to file
-    await new Promise(resolve => {
-      fs.writeFile(TMP_DB_PATH, JSON.stringify(data), err => {
-        if (err) console.log('Error writing phrases data to file. ', err);
-        console.log(`Phrases data saved to ${TMP_DB_PATH} file.`);
-        return resolve();
-      });
-    });
-  } catch (err) {
-    console.log('Error on updating phrases. ', err);
-  }
-});
+// const phrasesUpdater = schedule.scheduleJob('*/10 * * * *', async () => {
+//   try {
+//     // clear previous phrases
+//     data = {};
+//     cards = {};
+//     // get phrases by language
+//     for (l in languages) {
+//       if (languages[l] !== 'cv') {
+//         const { newCards, newData } = await getPhrasesData(languages[l]);
+//         _.set(data, `${languages[l]}`, newData);
+//         _.set(cards, `${languages[l]}`, newCards);
+//       }
+//     }
+//     // save data to file
+//     await new Promise(resolve => {
+//       fs.writeFile(TMP_DB_PATH, JSON.stringify(data), err => {
+//         if (err) console.log('Error writing phrases data to file. ', err);
+//         console.log(`Phrases data saved to ${TMP_DB_PATH} file.`);
+//         return resolve();
+//       });
+//     });
+//     // save data to file
+//     await new Promise(resolve => {
+//       fs.writeFile(TMP_CARDS_PATH, JSON.stringify(cards), err => {
+//         if (err) console.log('Error writing cards data to file. ', err);
+//         console.log(`Cards data saved to ${TMP_CARDS_PATH} file.`);
+//         return resolve();
+//       });
+//     });
+//   } catch (err) {
+//     console.log('Error on updating phrases. ', err);
+//   }
+// });
 // check google spreadsheet every 10 minutes
-const translationUpdater = schedule.scheduleJob('*/10 * * * *', async () => {
-  try {
-    const newTranslations = await getInterfaceTranslations();
-    translations = _.cloneDeep(newTranslations);
-    // save data to file
-    await new Promise(resolve => {
-      fs.writeFile(TMP_TRANSLATIONS_PATH, JSON.stringify(translations), err => {
-        if (err)
-          console.log(
-            'Error writing interface translations data to file. ',
-            err
-          );
-        console.log(
-          `Interface translatons saved to ${TMP_TRANSLATIONS_PATH} file.`
-        );
-        return resolve();
-      });
-    });
-  } catch (err) {
-    console.log('Error on updating interface translations. ', err);
-  }
-});
+// const translationUpdater = schedule.scheduleJob('*/10 * * * *', async () => {
+//   try {
+//     const newTranslations = await getInterfaceTranslations();
+//     translations = _.cloneDeep(newTranslations);
+//     // save data to file
+//     await new Promise(resolve => {
+//       fs.writeFile(TMP_TRANSLATIONS_PATH, JSON.stringify(translations), err => {
+//         if (err)
+//           console.log(
+//             'Error writing interface translations data to file. ',
+//             err
+//           );
+//         console.log(
+//           `Interface translatons saved to ${TMP_TRANSLATIONS_PATH} file.`
+//         );
+//         return resolve();
+//       });
+//     });
+//   } catch (err) {
+//     console.log('Error on updating interface translations. ', err);
+//   }
+// });
 
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(process.cwd(), 'public/index.html'));
@@ -221,10 +228,10 @@ app.post('/send-email', csrfProtection, async (req, res) => {
         let text = `<p><b>От кого:</b> ${fromName} <${fromEmail}></p>`;
         text = text + `<p><b>Текст письма:</b></p> ${striptags(emailText)}`;
         const message = {
-          from: '',
-          to: '',
-          cc: '',
-          subject: '[] Письмо с сайта!',
+          from: 'info@samah.ru',
+          to: 'info@samah.ru',
+          cc: 'sunafajro@gmail.com',
+          subject: '[SAMAH.RU] Письмо с сайта!',
           html: text,
         };
         await new Promise((resolve, reject) => {
@@ -269,6 +276,9 @@ app.listen(PORT, async () => {
     // loading phrases to memory
     const newData = await loadSavedData(TMP_DB_PATH);
     data = newData ? _.cloneDeep(newData) : {};
+    // loading cards to memory
+    const newCards = await loadSavedData(TMP_CARDS_PATH);
+    cards = newCards ? _.cloneDeep(newCards) : {};
     // loading translations to memory
     const newTranslations = await loadSavedData(TMP_TRANSLATIONS_PATH);
     translations = newTranslations ? _.cloneDeep(newTranslations) : {};
